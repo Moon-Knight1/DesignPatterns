@@ -21,31 +21,25 @@ useHead({
 
       <section>
         <h2>内容来源</h2>
-        <p>
-         本站内容整理自 <a href="https://refactoringguru.cn" target="_blank" rel="noopener">Refactoring Guru</a>
+        <p>本站内容整理自 <a href="https://refactoringguru.cn" target="_blank" rel="noopener">Refactoring Guru</a>
           中文版的 23 种 GoF 设计模式文档。原始内容以 Markdown 形式存放在
           <a href="https://github.com/Moon-Knight1/DesignPatterns/tree/main/theory" target="_blank" rel="noopener"><code>theory/</code></a>
-          目录下,本站直接渲染这些 Markdown 文件,不做二次创作。
-        </p>
+          目录下,本站直接渲染这些 Markdown 文件,不做二次创作。</p>
       </section>
 
       <section>
         <h2>技术栈</h2>
-        <p>
-         本站使用 Vue 3 + Vite + TypeScript 构建,Markdown 通过
+        <p>本站使用 Vue 3 + Vite + TypeScript 构建,Markdown 通过
           <a href="https://github.com/markdown-it/markdown-it" target="_blank" rel="noopener">markdown-it</a>
-          渲染,使用 vue-router 的 hash 模式路由,部署于 GitHub Pages。
-        </p>
+          渲染,使用 vue-router 的 hash 模式路由,部署于 GitHub Pages。</p>
       </section>
 
       <section>
         <h2>贡献</h2>
-        <p>
-          内容纠错与改进请通过
+        <p>内容纠错与改进请通过
           <a href="https://github.com/Moon-Knight1/DesignPatterns/issues" target="_blank" rel="noopener">Issue</a>
           或 Pull Request 提交至
-          <a href="https://github.com/Moon-Knight1/DesignPatterns" target="_blank" rel="noopener">源码仓库</a>。
-        </p>
+          <a href="https://github.com/Moon-Knight1/DesignPatterns" target="_blank" rel="noopener">源码仓库</a>。</p>
       </section>
 
       <section>
