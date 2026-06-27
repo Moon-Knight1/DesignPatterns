@@ -34,7 +34,7 @@ The repository currently holds 23 Chinese Markdown files under `theory/` (one of
 | D5 | Catalog interactivity | Cards only — no search, no sort, no filter | Simplest possible; matches demo aesthetic. |
 | D6 | Architecture | Approach A — Vite + Vue 3 + TS + vue-router (hash) + markdown-it + hardcoded patterns manifest | Smallest surface area; no MD editing required; reliable on GitHub Pages. |
 | D7 | Router strategy | `createWebHashHistory` | No 404.html fallback needed; survives GitHub Pages project-page quirks. |
-| D8 | Image serving | `publicDir: ['public', 'imgs']` + BASE_URL-prefixed src rewrites | Keeps existing `imgs/` repo structure intact. |
+| D8 | Image serving | `vite-plugin-static-copy` copies `imgs/` → `dist/imgs/` + BASE_URL-prefixed src rewrites | Vite's `publicDir` is typed `string \| false`, not `string[]`. Plugin keeps existing `imgs/` repo layout intact. |
 
 ---
 
@@ -149,6 +149,14 @@ All category / CTA tokens exceed WCAG AA against the cream background (4.5:1 for
 
 Type scale: 14 / 16 / 18 / 22 / 28 / 36 / 48 px. Body line-length clamped to 65–75 CJK characters.
 
+**Font loading strategy (avoids FOUT and minimizes first-paint cost):**
+
+- All Google Fonts are loaded with `font-display: swap` (the default for `<link>`-loaded fonts) so text remains visible during font swap.
+- Each Chinese font subset (`ZCOOL KuaiLe`, `Noto Serif SC`, `Noto Sans SC`) is loaded with `&subset=chinese-simplified` and `&text=…` containing only the characters known to appear on the site (a precomputed set collected from all `theory/*.md` plus the UI copy). This typically reduces font payload from ~3MB to ~150KB.
+- The `index.html` `<link>` tag uses a single combined `family=` query string and `preconnect` to `fonts.googleapis.com` and `fonts.gstatic.com` for DNS/TLS warm-up.
+- `Plus Jakarta Sans` (Latin accent) and `JetBrains Mono` (code) are full-file — they are already small.
+- A `@font-face` `unicode-range` declaration is set so browsers skip downloading glyph ranges they don't need.
+
 ### 5.4 Iconography
 
 - **Lucide** (`lucide-vue-next`), stroke 2px, rounded caps, vector.
@@ -180,6 +188,18 @@ Type scale: 14 / 16 / 18 / 22 / 28 / 36 / 48 px. Body line-length clamped to 65�
 - Mobile-first, breakpoints: 375 / 640 / 768 / 1024 / 1440
 - Container max-width 1200px; padding 16/24/32px at the three breakpoints
 - Catalog grid: 1 col < 640 / 2 col 640–1024 / 3 col 1024–1280 / 4 col ≥ 1280
+
+### 5.8 SEO & page metadata
+
+Even though the site is a client-side SPA, it should set per-route metadata so shared links render correctly and search engines can index individual pattern pages:
+
+- `index.html` ships with a sensible default `<title>` ("23 种 GoF 设计模式 · 学习手册") and `<meta name="description">` ("一份面向中文读者的交互式设计模式学习手册").
+- `@vueuse/head` is mounted in `App.vue` and consumed in each view via `useHead({ title, meta, link })`.
+- `HomeView.vue`: `useHead({ title: '23 种 GoF 设计模式 · 学习手册' })`
+- `PatternView.vue`: `useHead({ title: () => '${pattern.titleZh} · 23 种设计模式', meta: [{ name: 'description', content: pattern.summary }] })`
+- `AboutView.vue`: `useHead({ title: '关于 · 23 种设计模式' })`
+- A `<link rel="canonical">` is set to the production URL (`https://moon-knight1.github.io/DesignPatterns/`) on every page.
+- `og:title` / `og:description` / `og:type=article` are set per pattern so WeChat / Twitter / Slack unfurls work.
 
 ---
 
@@ -263,7 +283,7 @@ export const categories: Record<PatternCategory, Category> = {
 ### 7.3 Markdown loader (`src/data/markdown.ts`)
 
 ```ts
-const raw = import.meta.glob('/theory/*.md', {
+const raw = import.meta.glob('../../theory/*.md', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -276,7 +296,7 @@ export const markdownBySlug: Record<string, string> = Object.fromEntries(
 )
 ```
 
-Build-time eager import; 22 entries guaranteed; `interpreter` excluded.
+Relative path (`../../theory/`) is used instead of an absolute `/theory/` pattern. This is the canonical Vite form, robust across Vite versions, and resolves from `src/data/markdown.ts` to the project's `theory/` directory. Build-time eager import; 22 entries guaranteed; `interpreter` excluded.
 
 ---
 
@@ -319,7 +339,7 @@ export function useMarkdown(source: Ref<string> | string) {
 Notes:
 - `html: false` is a security choice — all `<script>` etc. in MD is escaped
 - `breaks: false` preserves paragraph semantics; Chinese text doesn't need line-break coercion
-- `markdown-it-anchor` uses `github-slugger` which handles CJK by transliterating per CommonMark
+- `markdown-it-anchor` uses `github-slugger`, which **preserves CJK characters in slugs verbatim** (it does *not* transliterate Chinese to pinyin). The resulting `id` attributes look like `#意图`, `#解决方案`, etc. These IDs work fine as fragment anchors in modern browsers. We accept this rather than introducing a pinyin conversion plugin.
 - No syntax highlighting (no Prism); code blocks styled by `prose.css` with `JetBrains Mono`
 
 ### 8.2 `useToc` composable
@@ -357,6 +377,22 @@ const router = createRouter({
 
 Lazy-loaded route components keep initial bundle small. Hash mode survives GitHub Pages project-page routing (no 404.html fallback required).
 
+### 9.2 `App.vue` — wire `@vueuse/head`
+
+```vue
+<script setup lang="ts">
+import { createHead } from '@vueuse/head'
+
+const head = createHead()
+</script>
+
+<template>
+  <RouterView />
+</template>
+```
+
+The head instance is created once at the root and consumed by individual views via `useHead(...)`. See §5.8 for per-view head configurations.
+
 ---
 
 ## 10. Build & deployment
@@ -366,12 +402,20 @@ Lazy-loaded route components keep initial bundle small. Hash mode survives GitHu
 ```ts
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig(({ mode }) => ({
   base: mode === 'production' ? '/DesignPatterns/' : '/',
-  plugins: [vue()],
-  publicDir: ['public', 'imgs'],
+  plugins: [
+    vue(),
+    viteStaticCopy({
+      targets: [
+        { src: 'imgs/**/*', dest: 'imgs' },   // copies imgs/<pattern>/*.png → dist/imgs/<pattern>/*.png
+      ],
+    }),
+  ],
+  publicDir: 'public',
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
@@ -384,7 +428,45 @@ export default defineConfig(({ mode }) => ({
 }))
 ```
 
-### 10.2 `package.json` scripts
+`vite-plugin-static-copy` is used because Vite's `publicDir` only accepts `string | false`. The plugin copies `imgs/<pattern>/*.png` into `dist/imgs/<pattern>/*.png` so it is served at `/DesignPatterns/imgs/<pattern>/<file>.png` at runtime. The `imgs/` directory stays at the repo root, preserving the existing image-authoring layout documented in `CLAUDE.md`.
+
+### 10.2 `package.json` (key fields)
+
+```json
+{
+  "name": "design-patterns-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev":       "vite",
+    "build":     "vue-tsc --noEmit && vite build",
+    "preview":   "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue":                  "^3.5.0",
+    "vue-router":           "^4.4.0",
+    "markdown-it":          "^14.1.0",
+    "markdown-it-anchor":   "^9.2.0",
+    "github-slugger":       "^2.0.0",
+    "lucide-vue-next":      "^0.460.0",
+    "@vueuse/head":         "^2.0.0"
+  },
+  "devDependencies": {
+    "vite":                  "^5.4.0",
+    "@vitejs/plugin-vue":    "^5.1.0",
+    "vite-plugin-static-copy": "^1.0.6",
+    "typescript":            "^5.5.0",
+    "vue-tsc":               "^2.1.0",
+    "@types/markdown-it":    "^14.1.2",
+    "@types/node":           "^22.0.0"
+  }
+}
+```
+
+`@vueuse/head` is used for SEO metadata (dynamic `document.title` + `meta description`); see §5.8. `vite-plugin-static-copy` is the alternative to `publicDir` array; see §10.1.
+
+### 10.2a `package.json` scripts
 
 | Script | Command |
 |---|---|
@@ -487,11 +569,11 @@ After that, every push to `main` triggers a build + deploy. Manual rebuild is av
 |---|---|
 | `interpreter.md` is empty | Filtered in `markdown.ts`; not in manifest; catalog shows 22 cards |
 | Hash router on Pages | `index.html` is the only file Pages serves for any path; client-side routing handles the rest — no 404.html needed |
-| Missing image for a pattern | `<img>` shows a claymorphism-styled "示意图" placeholder block (visible text fallback, not a broken icon) |
+| Missing image for a pattern | Two-stage fallback: while the image is **fetching** (lazy-loaded), render a neutral gray skeleton box sized to the image's `aspect-ratio` to reserve layout. Only when the image actually fires `@error` (404 / broken), render a claymorphism-styled "示意图" placeholder with the pattern name as text. The skeleton and the clay placeholder are visually distinct so the two states cannot be confused. |
 | Refresh on a pattern page | Hash routing → `/#/pattern/<slug>` survives refresh natively |
 | Markdown with raw HTML | `html: false` in markdown-it config — any `<script>` etc. is escaped to text |
 | Large `imgs/` directory | Vite copies as-is; below-the-fold images use `loading="lazy"` |
-| CJK heading slugs | `github-slugger` transliterates per CommonMark rules; collisions handled by the slugger's internal counter |
+| CJK heading slugs | `github-slugger` preserves Chinese characters verbatim in `id` attributes (e.g. `#意图`); these work as fragment anchors in all modern browsers. Collisions handled by the slugger's internal counter. |
 | Bogus `#/pattern/<unknown>` deep-link | `PatternView` checks `markdownBySlug[slug]`; if missing, renders a claymorphism "未找到该模式" message with a link back to home |
 
 ---
