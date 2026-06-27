@@ -45,8 +45,6 @@ describe('patterns manifest', () => {
 
   it('chains correctly between categories', () => {
     // Last creational → first structural
-    const factoryMethod = getPattern('factory-method')
-    const abstractFactory = getPattern('abstract-factory')
     expect(getNext('abstract-factory')?.slug).toBe('builder')      // within creational
     expect(getNext('prototype')?.slug).toBe('adapter')              // last creational → first structural
     expect(getNext('proxy')?.slug).toBe('chain-of-responsibility')  // last structural → first behavioral
