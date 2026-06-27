@@ -113,6 +113,11 @@ import Container from './Container.vue'
   box-shadow: var(--shadow-clay-in);
 }
 
+.link:focus-visible {
+  outline: 2px solid var(--cta-coral);
+  outline-offset: 2px;
+}
+
 @media (max-width: 640px) {
   .link span:not([aria-label]) {
     display: none;
