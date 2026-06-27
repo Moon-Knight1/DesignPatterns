@@ -96,7 +96,7 @@ Three routes, all Chinese, hash-based:
 - Two-column on ≥1024px:
   - Left ~70%: rendered Markdown (`<MarkdownRenderer />`)
   - Right ~30%: sticky `<PatternToc />` with auto-generated anchors
-- **Footer nav**: prev / next pattern cards chained across all 22 patterns in category order (Creational 1→5 → Structural 1→7 → Behavioral 1→10)
+- **Footer nav**: prev / next pattern cards chained across all 22 patterns in category order (Creational 1→5 → Structural 1→7 → Behavioral 1→10). **Boundary rules:** on the first pattern (`singleton`), the "上一篇 (Prev)" card is hidden. On the last pattern (`visitor`), the "下一篇 (Next)" card is hidden. The single visible card on those two pages is left-aligned within its column (not centered) so the layout still reads as a nav footer, not a stray element.
 
 ### 4.3 About
 
@@ -278,7 +278,7 @@ export const categories: Record<PatternCategory, Category> = {
 }
 ```
 
-`PatternView` derives prev/next by chaining all 22 patterns in category order (Creational 1→5, then Structural 1→7, then Behavioral 1→10).
+`PatternView` derives prev/next by chaining all 22 patterns in category order (Creational 1→5, then Structural 1→7, then Behavioral 1→10). Boundary handling: the first pattern's `prev` resolves to `null` (Prev card hidden), the last pattern's `next` resolves to `null` (Next card hidden) — see §4.2. `PatternFooterNav` checks for `null` on either side and conditionally renders only the present card.
 
 ### 7.3 Markdown loader (`src/data/markdown.ts`)
 
@@ -377,13 +377,31 @@ const router = createRouter({
 
 Lazy-loaded route components keep initial bundle small. Hash mode survives GitHub Pages project-page routing (no 404.html fallback required).
 
-### 9.2 `App.vue` — wire `@vueuse/head`
+### 9.2 `main.ts` — wire `@vueuse/head`
+
+`@vueuse/head` is a Vue plugin, so `createHead()` and `app.use(head)` must run during app creation in `main.ts` (not in `App.vue`). Per-view `useHead(...)` calls then target the registered head instance.
+
+```ts
+// src/main.ts
+import { createApp } from 'vue'
+import { createHead } from '@vueuse/head'
+import App from './App.vue'
+import { router } from './router'
+
+const app = createApp(App)
+const head = createHead()
+
+app.use(head)
+app.use(router)
+app.mount('#app')
+```
+
+`App.vue` stays minimal:
 
 ```vue
+<!-- src/App.vue -->
 <script setup lang="ts">
-import { createHead } from '@vueuse/head'
-
-const head = createHead()
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
@@ -391,7 +409,7 @@ const head = createHead()
 </template>
 ```
 
-The head instance is created once at the root and consumed by individual views via `useHead(...)`. See §5.8 for per-view head configurations.
+See §5.8 for per-view `useHead(...)` calls (HomeView / PatternView / AboutView).
 
 ---
 
