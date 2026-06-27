@@ -4,5 +4,7 @@ import { RouterView } from 'vue-router'
 
 <template>
   <a class="skip-link" href="#main">跳转到主要内容</a>
-  <RouterView />
+  <main id="main">
+    <RouterView />
+  </main>
 </template>
