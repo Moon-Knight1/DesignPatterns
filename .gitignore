@@ -1,0 +1,41 @@
+# 1. 依赖目录 (必须忽略)
+node_modules/
+
+# 2. 构建输出目录 (根据你的工具选择)
+/dist
+/build
+/.output          # Nuxt项目[reference:4]
+/.data            # Nuxt项目[reference:5]
+
+# 3. 本地环境变量文件 (包含敏感信息)
+.env.local
+.env.*.local
+.env              # 如果使用，请确保不提交生产环境配置[reference:6]
+
+# 4. 日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 5. 编辑器或IDE配置文件 (团队共享时可酌情保留)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 6. 操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 7. 其他临时文件或测试覆盖报告
+*.log
+tmp/
+test-data/        # 测试数据[reference:7]
+/coverage         # 测试覆盖率报告[reference:8]
+
+# 8.自定义
+download_images.py
