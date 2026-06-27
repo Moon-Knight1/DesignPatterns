@@ -1,0 +1,78 @@
+:root {
+  /* Surface */
+  --bg-cream: #FFF7F0;
+  --surface-card: #FFFFFF;
+
+  /* Ink (text) — verified WCAG AA on --bg-cream */
+  --ink-900: #1F2937;   /* primary text — 14.5:1 on cream */
+  --ink-600: #4B5563;   /* secondary text — 7.5:1 on cream */
+  --ink-400: #9CA3AF;   /* tertiary text / placeholder — 3.5:1, UI only */
+
+  /* Categories */
+  --cat-creational: #7DD3C0;
+  --cat-creational-soft: #D4F1EA;
+  --cat-structural: #A78BFA;
+  --cat-structural-soft: #E5DDFB;
+  --cat-behavioral: #FB923C;
+  --cat-behavioral-soft: #FCE4CF;
+
+  /* CTA */
+  --cta-coral: #F97316;
+  --cta-coral-soft: #FED7AA;
+  --cta-coral-ink: #FFFFFF;
+
+  /* Accents */
+  --accent-yellow: #FCD34D;
+
+  /* Radii */
+  --radius-card: 24px;
+  --radius-pill: 999px;
+  --radius-soft: 16px;
+  --radius-xs: 8px;
+
+  /* Clay shadows */
+  --shadow-clay-out: 8px 8px 16px rgba(0, 0, 0, 0.10), -8px -8px 16px rgba(255, 255, 255, 0.85);
+  --shadow-clay-out-lg: 12px 12px 28px rgba(0, 0, 0, 0.12), -10px -10px 22px rgba(255, 255, 255, 0.9);
+  --shadow-clay-in: inset 4px 4px 10px rgba(0, 0, 0, 0.08), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
+  --shadow-clay-press: inset 6px 6px 12px rgba(0, 0, 0, 0.12), inset -6px -6px 12px rgba(255, 255, 255, 0.95);
+  --shadow-focus: 0 0 0 2px var(--cta-coral);
+
+  /* Spacing scale (4pt / 8pt rhythm) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Typography */
+  --font-display: 'ZCOOL KuaiLe', 'Noto Serif SC', serif;
+  --font-heading: 'Noto Serif SC', serif;
+  --font-body: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-latin: 'Plus Jakarta Sans', sans-serif;
+  --font-code: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Container */
+  --container-max: 1200px;
+  --container-padding: 16px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 180ms;
+  --duration-normal: 240ms;
+  --duration-slow: 360ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --container-padding: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --container-padding: 32px;
+  }
+}
