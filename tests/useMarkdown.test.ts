@@ -56,4 +56,30 @@ describe('useMarkdown', () => {
     src.value = '# Second'
     expect(html.value).toContain('Second')
   })
+
+  it('does not promote paragraphs to h2 when setext underline pattern is used', () => {
+    // The theory/*.md files use `- \n**bold** text\n- \nmore text` as
+    // a visual separator. Without preprocessing, markdown-it treats the
+    // trailing `- ` line as a setext-heading underline and promotes the
+    // preceding paragraph to <h2>, which pollutes the TOC and applies
+    // heading styles to body text. After the fix, paragraphs render as
+    // separate <p> elements with no spurious <h2>.
+    const md = [
+      '- ',
+      '**发布者** foo bar baz.',
+      '- ',
+      '当新事件发生时 qux.',
+    ].join('\r\n')
+    const html = useMarkdown(md).value
+    expect(html).not.toMatch(/<h2[^>]*>.*发布者.*<\/h2>/)
+    expect(html).toMatch(/<p><strong>发布者<\/strong>[\s\S]*<\/p>/)
+    expect(html).toMatch(/<p>当新事件发生时 qux\.<\/p>/)
+  })
+
+  it('preserves real list items with content', () => {
+    // Sanity: the `- ` strip only targets empty list markers.
+    const md = '- item one\n- item two\n- item three'
+    const html = useMarkdown(md).value
+    expect(html).toMatch(/<ul>[\s\S]*<li>item one<\/li>[\s\S]*<li>item two<\/li>[\s\S]*<li>item three<\/li>[\s\S]*<\/ul>/)
+  })
 })

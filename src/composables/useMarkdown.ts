@@ -22,10 +22,16 @@ export function useMarkdown(source: string | Ref<string>): ComputedRef<string> {
 
   return computed(() => {
     const base = import.meta.env.BASE_URL || '/'
-    const rewritten = src.value.replace(
-      /\]\(\.\.\/imgs\//g,
-      `](${base}imgs/`,
-    )
+    // Two pre-processing passes before markdown-it sees the source:
+    //   1. Rewrite `](../imgs/...)` to point at the runtime base URL.
+    //   2. Collapse the `- ` empty-list-item separators that the theory
+    //      files use as paragraph dividers. Without this, markdown-it
+    //      treats each trailing `- ` as a setext-heading underline and
+    //      promotes the preceding paragraph to <h2>, which pollutes the
+    //      TOC and applies the heading style to body text.
+    const rewritten = src.value
+      .replace(/\]\(\.\.\/imgs\//g, `](${base}imgs/`)
+      .replace(/^- \r?\n/gm, '\r\n\r\n')
     return md.render(rewritten)
   })
 }

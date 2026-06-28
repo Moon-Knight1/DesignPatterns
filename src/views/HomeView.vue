@@ -4,8 +4,6 @@ import Container from '@/components/layout/Container.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 import HeroSection from '@/components/home/HeroSection.vue'
 import PatternCatalog from '@/components/home/PatternCatalog.vue'
-import ProgressDemo from '@/components/home/ProgressDemo.vue'
-import CtaBanner from '@/components/home/CtaBanner.vue'
 
 useHead({
   title: '23 种 GoF 设计模式 · 学习手册',
@@ -23,8 +21,6 @@ useHead({
   <Container>
     <HeroSection />
     <PatternCatalog />
-    <ProgressDemo />
-    <CtaBanner />
   </Container>
   <SiteFooter />
 </template>
