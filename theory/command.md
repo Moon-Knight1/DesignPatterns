@@ -4,25 +4,25 @@
 
 **命令模式**是一种行为设计模式， 它可将请求转换为一个包含与请求相关的所有信息的独立对象。 该转换让你能根据不同的请求将方法参数化、 延迟请求执行或将其放入队列中， 且能实现可撤销操作。 
 
-![命令设计模式](https://refactoringguru.cn/images/patterns/content/command/command-zh.png?id=e5971678fc9f5e2f30599ff8424d4bd9)
+![命令设计模式](../imgs/command/command-zh.png)
 
 ## 问题
 
 假如你正在开发一款新的文字编辑器， 当前的任务是创建一个包含多个按钮的工具栏， 并让每个按钮对应编辑器的不同操作。 你创建了一个非常简洁的 `按钮`类， 它不仅可用于生成工具栏上的按钮， 还可用于生成各种对话框的通用按钮。 
 
-![命令模式解决的问题](https://refactoringguru.cn/images/patterns/diagrams/command/problem1.png?id=84189315a0e8d91da262792979005ab4)
+![命令模式解决的问题](../imgs/command/problem1.png)
 
 应用中的所有按钮都可以继承相同的类
 
 尽管所有按钮看上去都很相似， 但它们可以完成不同的操作 （打开、 保存、 打印和应用等）。 你会在哪里放置这些按钮的点击处理代码呢？ 最简单的解决方案是在使用按钮的每个地方都创建大量的子类。 这些子类中包含按钮点击后必须执行的代码。
 
-![大量的按钮子类](https://refactoringguru.cn/images/patterns/diagrams/command/problem2.png?id=f0e33da1842b3a3ee3b4857de0b6ec93)
+![大量的按钮子类](../imgs/command/problem2.png)
 
 大量的按钮子类。 没关系的。
 
 你很快就意识到这种方式有严重缺陷。 首先， 你创建了大量的子类， 当每次修改基类 `按钮`时， 你都有可能需要修改所有子类的代码。 简单来说， GUI 代码以一种拙劣的方式依赖于业务逻辑中的不稳定代码。 
 
-![多个类实现同一功能](https://refactoringguru.cn/images/patterns/diagrams/command/problem3-zh.png?id=6418d15863a142a7519ff7513841ee6d)
+![多个类实现同一功能](../imgs/command/problem3-zh.png)
 
 多个类实现同一功能。
 
@@ -36,7 +36,7 @@
 
 这在代码中看上去就像这样： 一个 GUI 对象传递一些参数来调用一个业务逻辑对象。 这个过程通常被描述为一个对象发送*请求*给另一个对象。 
 
-![GUI 层可以直接访问业务逻辑层](https://refactoringguru.cn/images/patterns/diagrams/command/solution1-zh.png?id=ae19200346219d8dab71e6ce5169bdf0)
+![GUI 层可以直接访问业务逻辑层](../imgs/command/solution1-zh.png)
 
 GUI 层可以直接访问业务逻辑层。
 
@@ -44,7 +44,7 @@ GUI 层可以直接访问业务逻辑层。
 
 命令对象负责连接不同的 GUI 和业务逻辑对象。 此后， GUI 对象无需了解业务逻辑对象是否获得了请求， 也无需了解其对请求进行处理的方式。 GUI 对象触发命令即可， 命令对象会自行处理所有细节工作。
 
-![通过命令访问业务逻辑层。](https://refactoringguru.cn/images/patterns/diagrams/command/solution2-zh.png?id=ba8af77475dbab21fb51081933efc4f5)
+![通过命令访问业务逻辑层。](../imgs/command/solution2-zh.png)
 
 通过命令访问业务逻辑层。
 
@@ -52,7 +52,7 @@ GUI 层可以直接访问业务逻辑层。
 
 你可能会注意到遗漏的一块拼图——请求的参数。 GUI 对象可以给业务层对象提供一些参数。 但执行命令方法没有任何参数， 所以我们如何将请求的详情发送给接收者呢？ 答案是： 使用数据对命令进行预先配置， 或者让其能够自行获取数据。
 
-![GUI 对象将命令委派给命令对象](https://refactoringguru.cn/images/patterns/diagrams/command/solution3-zh.png?id=3cc7b441711ae6188366a4b20c9877ef)
+![GUI 对象将命令委派给命令对象](../imgs/command/solution3-zh.png)
 
 GUI 对象将命令委派给命令对象。
 
@@ -66,7 +66,7 @@ GUI 对象将命令委派给命令对象。
 
 ## 真实世界类比
 
-![在餐厅里点餐](https://refactoringguru.cn/images/patterns/content/command/command-comic-1.png?id=551df832f445080976f3116e0dc120c9)
+![在餐厅里点餐](../imgs/command/command-comic-1.png)
 
 在餐厅里点餐。
 
@@ -76,9 +76,9 @@ GUI 对象将命令委派给命令对象。
 
 ## 命令模式结构
 
-![命令设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/command/structure.png?id=1cd7833638f4c43630f4a84017d31195)
+![命令设计模式的结构](../imgs/command/structure.png)
 
-![命令设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/command/structure-indexed.png?id=95529d7282dc7bc1c5bc443423b1cf4f)
+![命令设计模式的结构](../imgs/command/structure-indexed.png)
 
 - 
 **发送者**（Sender）——亦称 “触发者 （Invoker）”——类负责对请求进行初始化， 其中必须包含一个成员变量来存储对于命令对象的引用。 发送者触发命令， 而不向接收者直接发送请求。 注意， 发送者并不负责创建命令对象： 它通常会通过构造函数从客户端处获得预先生成的命令。
@@ -95,7 +95,7 @@ GUI 对象将命令委派给命令对象。
 
 在本例中， **命令**模式会记录已执行操作的历史记录， 以在需要时撤销操作。 
 
-![命令模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/command/example.png?id=1f42c8395fe54d0e409026b91881e2a0)
+![命令模式示例的结构](../imgs/command/example.png)
 
 文本编辑器中的可撤销操作。
 

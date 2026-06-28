@@ -4,7 +4,7 @@
 
 **装饰模式**是一种结构型设计模式， 允许你通过将对象放入包含行为的特殊封装对象中来为原对象绑定新的行为。 
 
-![装饰设计模式](https://refactoringguru.cn/images/patterns/content/decorator/decorator.png?id=710c66670c7123e0928d3b3758aea79e)
+![装饰设计模式](../imgs/decorator/decorator.png)
 
 ## 问题
 
@@ -12,13 +12,13 @@
 
 库的最初版本基于 `通知器`Notifier类， 其中只有很少的几个成员变量， 一个构造函数和一个 `send`发送方法。 该方法可以接收来自客户端的消息参数， 并将该消息发送给一系列的邮箱， 邮箱列表则是通过构造函数传递给通知器的。 作为客户端的第三方程序仅会创建和配置通知器对象一次， 然后在有重要事件发生时对其进行调用。 
 
-![使用装饰模式前的库结构](https://refactoringguru.cn/images/patterns/diagrams/decorator/problem1-zh.png?id=fde2f85a034e48c129e4078b3346fcd4)
+![使用装饰模式前的库结构](../imgs/decorator/problem1-zh.png)
 
 程序可以使用通知器类向预定义的邮箱发送重要事件通知。
 
 此后某个时刻， 你会发现库的用户希望使用除邮件通知之外的功能。 许多用户会希望接收关于紧急事件的手机短信， 还有些用户希望在微信上接收消息， 而公司用户则希望在 QQ 上接收消息。
 
-![实现其他类型通知后的库结构](https://refactoringguru.cn/images/patterns/diagrams/decorator/problem2-zh.png?id=a5c79dc514f0b47ace2876588cd78a6d)
+![实现其他类型通知后的库结构](../imgs/decorator/problem2-zh.png)
 
 每种通知类型都将作为通知器的一个子类得以实现。
 
@@ -28,7 +28,7 @@
 
 你可以尝试创建一个特殊子类来将多种通知方法组合在一起以解决该问题。 但这种方式会使得代码量迅速膨胀， 不仅仅是程序库代码， 客户端代码也会如此。
 
-![创建组合类后的程序库结构](https://refactoringguru.cn/images/patterns/diagrams/decorator/problem3-zh.png?id=61ab2d9d87e214d278b7c4dad2466dde)
+![创建组合类后的程序库结构](../imgs/decorator/problem3-zh.png)
 
 子类组合数量爆炸。
 
@@ -45,7 +45,7 @@
 
 你可以使用这个新方法来轻松替换各种连接的 “小帮手” 对象， 从而能在运行时改变容器的行为。 一个对象可以使用多个类的行为， 包含多个指向其他对象的引用， 并将各种工作委派给引用对象。 聚合 （或组合） 组合是许多设计模式背后的关键原则 （包括装饰在内）。 记住这一点后， 让我们继续关于模式的讨论。
 
-![继承与聚合的对比](https://refactoringguru.cn/images/patterns/diagrams/decorator/solution1-zh.png?id=f1c9b79687c2c5c5fe4293c6abbda474)
+![继承与聚合的对比](../imgs/decorator/solution1-zh.png)
 
 继承与聚合的对比
 
@@ -55,13 +55,13 @@
 
 比如在消息通知示例中， 我们可以将简单邮件通知行为放在基类 `通知器`中， 但将所有其他通知方法放入装饰中。 
 
-![装饰模式解决方案](https://refactoringguru.cn/images/patterns/diagrams/decorator/solution2-zh.png?id=036942eadd647b347d712a7d40fd34b5)
+![装饰模式解决方案](../imgs/decorator/solution2-zh.png)
 
 将各种通知方法放入装饰。
 
 客户端代码必须将基础通知器放入一系列自己所需的装饰中。 因此最后的对象将形成一个栈结构。
 
-![程序可以配置由通知装饰构成的复杂栈](https://refactoringguru.cn/images/patterns/diagrams/decorator/solution3-zh.png?id=56640f5f90448e9d2d58aadf8315c14b)
+![程序可以配置由通知装饰构成的复杂栈](../imgs/decorator/solution3-zh.png)
 
 程序可以配置由通知装饰构成的复杂栈。
 
@@ -71,7 +71,7 @@
 
 ## 真实世界类比
 
-![装饰模式示例](https://refactoringguru.cn/images/patterns/content/decorator/decorator-comic-1.png?id=80d95baacbfb91f5bcdbdc7814b0c64d)
+![装饰模式示例](../imgs/decorator/decorator-comic-1.png)
 
 穿上多件衣服将获得组合性的效果。
 
@@ -79,9 +79,9 @@
 
 ## 装饰模式结构
 
-![装饰设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/decorator/structure.png?id=8c95d894aecce5315cc1b12093a7ea0c)
+![装饰设计模式的结构](../imgs/decorator/structure.png)
 
-![装饰设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/decorator/structure-indexed.png?id=09401b230a58f2249e4c9a1195d485a0)
+![装饰设计模式的结构](../imgs/decorator/structure-indexed.png)
 
 - 
 **部件**（Component） 声明封装器和被封装对象的公用接口。
@@ -98,7 +98,7 @@
 
 在本例中， **装饰**模式能够对敏感数据进行压缩和加密， 从而将数据从使用数据的代码中独立出来。 
 
-![装饰模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/decorator/example.png?id=eec9dc488f00c85f50e764323baa723e)
+![装饰模式示例的结构](../imgs/decorator/example.png)
 
 加密和压缩装饰的示例。
 

@@ -42,3 +42,8 @@ download_images.py
 
 # 9. Vite ��ʱĿ¼
 .vite/
+# 10. TypeScript 增量构建信息（vue-tsc -b 产物）
+*.tsbuildinfo
+
+# 11. Python 字节码缓存（download_images.py 运行时产生）
+__pycache__/

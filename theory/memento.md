@@ -4,7 +4,7 @@
 
 **备忘录模式**是一种行为设计模式， 允许在不暴露对象实现细节的情况下保存和恢复对象之前的状态。 
 
-![备忘录设计模式](https://refactoringguru.cn/images/patterns/content/memento/memento-zh.png?id=b9a5346bb3fb6f60ced9500dd0b79a53)
+![备忘录设计模式](../imgs/memento/memento-zh.png)
 
 ## 问题
 
@@ -12,7 +12,7 @@
 
 后来， 你决定让用户能撤销施加在文本上的任何操作。 这项功能在过去几年里变得十分普遍， 因此用户期待任何程序都有这项功能。 你选择采用直接的方式来实现该功能： 程序在执行任何操作前会记录所有的对象状态， 并将其保存下来。 当用户此后需要撤销某个操作时， 程序将从历史记录中获取最近的快照， 然后使用它来恢复所有对象的状态。
 
-![在编辑器中撤销操作](https://refactoringguru.cn/images/patterns/diagrams/memento/problem1-zh.png?id=a61d5eb91c92e13058a0bf30c4a5e1e5)
+![在编辑器中撤销操作](../imgs/memento/problem1-zh.png)
 
 程序在执行操作前保存所有对象的状态快照， 稍后可通过快照将对象恢复到之前的状态。
 
@@ -20,7 +20,7 @@
 
 现在我们暂时忽略这个问题， 假设对象都像嬉皮士一样： 喜欢开放式的关系并会公开其所有状态。 尽管这种方式能够解决当前问题， 让你可随时生成对象的状态快照， 但这种方式仍存在一些严重问题。 未来你可能会添加或删除一些成员变量。 这听上去很简单， 但需要对负责复制受影响对象状态的类进行更改。
 
-![如何复制对象的私有状态？](https://refactoringguru.cn/images/patterns/diagrams/memento/problem2-zh.png?id=caf940fdd7cc2de0a67d14a9d5ecee85)
+![如何复制对象的私有状态？](../imgs/memento/problem2-zh.png)
 
 如何复制对象的私有状态？
 
@@ -38,7 +38,7 @@
 
 模式建议将对象状态的副本存储在一个名为*备忘录* （Memento） 的特殊对象中。 除了创建备忘录的对象外， 任何对象都不能访问备忘录的内容。 其他对象必须使用受限接口与备忘录进行交互， 它们可以获取快照的元数据 （创建时间和操作名称等）， 但不能获取快照中原始对象的状态。 
 
-![原发器拥有对备忘录的完全权限，负责人则只能访问元数据](https://refactoringguru.cn/images/patterns/diagrams/memento/solution-zh.png?id=84cb4ff37a2557b58bbacfad8f37b56b)
+![原发器拥有对备忘录的完全权限，负责人则只能访问元数据](../imgs/memento/solution-zh.png)
 
 原发器拥有对备忘录的完全访问权限， 负责人则只能访问元数据。
 
@@ -54,9 +54,9 @@
 
 该模式的经典实现方式依赖于许多流行编程语言 （例如 C++、 C# 和 Java） 所支持的嵌套类。
 
-![基于嵌套类的备忘录](https://refactoringguru.cn/images/patterns/diagrams/memento/structure1.png?id=4b4a42363a005b617d4df06689787385)
+![基于嵌套类的备忘录](../imgs/memento/structure1.png)
 
-![基于嵌套类的备忘录](https://refactoringguru.cn/images/patterns/diagrams/memento/structure1-indexed.png?id=f79a8356b087ae6b004aec42b787ae2e)
+![基于嵌套类的备忘录](../imgs/memento/structure1-indexed.png)
 
 - 
 **原发器**（Originator） 类可以生成自身状态的快照， 也可以在需要时通过快照恢复自身状态。
@@ -71,9 +71,9 @@
 
 另外一种实现方法适用于不支持嵌套类的编程语言 （没错， 我说的就是 PHP）。
 
-![不使用嵌套类的备忘录](https://refactoringguru.cn/images/patterns/diagrams/memento/structure2.png?id=fcff71cb648389be2e302fbe55e2f847)
+![不使用嵌套类的备忘录](../imgs/memento/structure2.png)
 
-![不使用嵌套类的备忘录](https://refactoringguru.cn/images/patterns/diagrams/memento/structure2-indexed.png?id=2c98b4f64b03f2a30e159de31ca9f718)
+![不使用嵌套类的备忘录](../imgs/memento/structure2-indexed.png)
 
 - 
 在没有嵌套类的情况下， 你可以规定负责人仅可通过明确声明的中间接口与备忘录互动， 该接口仅声明与备忘录元数据相关的方法， 限制其对备忘录成员变量的直接访问权限。 
@@ -84,9 +84,9 @@
 
 如果你不想让其他类有任何机会通过备忘录来访问原发器的状态， 那么还有另一种可用的实现方式。
 
-![封装更加严格的备忘录](https://refactoringguru.cn/images/patterns/diagrams/memento/structure3.png?id=6c3ef6a916be8c8ec6d6659d19a6a79f)
+![封装更加严格的备忘录](../imgs/memento/structure3.png)
 
-![封装更加严格的备忘录](https://refactoringguru.cn/images/patterns/diagrams/memento/structure3-indexed.png?id=17e84b0ef89a41bb3fb844c8d7a445ad)
+![封装更加严格的备忘录](../imgs/memento/structure3-indexed.png)
 
 - 
 这种实现方式允许存在多种不同类型的原发器和备忘录。 每种原发器都和其相应的备忘录类进行交互。 原发器和备忘录都不会将其状态暴露给其他类。 
@@ -99,7 +99,7 @@
 
 本例结合使用了[命令](https://refactoringguru.cn/design-patterns/command)模式与备忘录模式， 可保存复杂文字编辑器的状态快照， 并能在需要时从快照中恢复之前的状态。 
 
-![备忘录示例的结构](https://refactoringguru.cn/images/patterns/diagrams/memento/example.png?id=fb2196b065f374a1c2a64a0943463760)
+![备忘录示例的结构](../imgs/memento/example.png)
 
 保存文字编辑器状态的快照。
 

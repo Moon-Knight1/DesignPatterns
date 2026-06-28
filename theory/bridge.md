@@ -4,7 +4,7 @@
 
 **桥接模式**是一种结构型设计模式， 可将一个大类或一系列紧密相关的类拆分为抽象和实现两个独立的层次结构， 从而能在开发时分别使用。 
 
-![桥接设计模式](https://refactoringguru.cn/images/patterns/content/bridge/bridge.png?id=bd543d4fb32e11647767301581a5ad54)
+![桥接设计模式](../imgs/bridge/bridge.png)
 
 ## 问题
 
@@ -12,7 +12,7 @@
 
 假如你有一个几何 `形状`Shape类， 从它能扩展出两个子类：  `圆形`Circle和 `方形`Square 。 你希望对这样的类层次结构进行扩展以使其包含颜色， 所以你打算创建名为 `红色`Red和 `蓝色`Blue的形状子类。 但是， 由于你已有两个子类， 所以总共需要创建四个类才能覆盖所有组合， 例如 `蓝色圆形`BlueCircle和 `红色方形`RedSquare 。 
 
-![桥接模式解决的问题](https://refactoringguru.cn/images/patterns/diagrams/bridge/problem-zh.png?id=b629ac68586280f371d132e2a557e029)
+![桥接模式解决的问题](../imgs/bridge/problem-zh.png)
 
 所有组合类的数量将以几何级数增长。
 
@@ -24,7 +24,7 @@
 
 桥接模式通过将继承改为组合的方式来解决这个问题。 具体来说， 就是抽取其中一个维度并使之成为独立的类层次， 这样就可以在初始类中引用这个新层次的对象， 从而使得一个类不必拥有所有的状态和行为。
 
-![桥接模式的解决方案](https://refactoringguru.cn/images/patterns/diagrams/bridge/solution-zh.png?id=1e12aa93e72a643f325f8d10fa901d05)
+![桥接模式的解决方案](../imgs/bridge/solution-zh.png)
 
 将一个类层次转化为多个相关的类层次， 避免单个类层次的失控。
 
@@ -47,7 +47,7 @@
 
 在最糟糕的情况下， 程序可能会是一团乱麻， 其中包含数百种条件语句， 连接着代码各处不同种类的 GUI 和各种 API。
 
-![在模块化代码中驾驭变化要容易得多](https://refactoringguru.cn/images/patterns/content/bridge/bridge-3-zh.png?id=4cd9192e85ecb4bd2524bd6ee2b06b90)
+![在模块化代码中驾驭变化要容易得多](../imgs/bridge/bridge-3-zh.png)
 
 在庞杂的代码中， 即使是很小的改动都非常难以完成， 因为你必须要在*整体上*对代码有充分的理解。 而在较小且定义明确的模块中， 进行修改则要容易得多。 
 
@@ -58,7 +58,7 @@
 - 抽象部分： 程序的 GUI 层。
 - 实现部分： 操作系统的 API。
 
-![跨平台结构](https://refactoringguru.cn/images/patterns/content/bridge/bridge-2-zh.png?id=d5aca46e6cc7bcc88c1e77e328aa577b)
+![跨平台结构](../imgs/bridge/bridge-2-zh.png)
 
 创建跨平台应用程序的一种方法
 
@@ -68,9 +68,9 @@
 
 ## 桥接模式结构
 
-![桥接设计模式](https://refactoringguru.cn/images/patterns/diagrams/bridge/structure-zh.png?id=8f6df21bea5074e798d6a4330c1ffcf9)
+![桥接设计模式](../imgs/bridge/structure-zh.png)
 
-![桥接设计模式](https://refactoringguru.cn/images/patterns/diagrams/bridge/structure-zh-indexed.png?id=03d44e0908d8c6cb24f65e48a6bed8cd)
+![桥接设计模式](../imgs/bridge/structure-zh-indexed.png)
 
 - 
 **抽象部分**（Abstraction） 提供高层控制逻辑， 依赖于完成底层实际工作的实现对象。
@@ -87,7 +87,7 @@
 
 示例演示了**桥接**模式如何拆分程序中同时管理设备及其遥控器的庞杂代码。  `设备`Device类作为实现部分， 而 `遥控器`Remote类则作为抽象部分。 
 
-![桥接模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/bridge/example-zh.png?id=df80ce9180da87f064cf4f2fa991bd43)
+![桥接模式示例的结构](../imgs/bridge/example-zh.png)
 
 最初类层次结构被拆分为两个部分： 设备和遥控器。
 

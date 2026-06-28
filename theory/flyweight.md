@@ -4,7 +4,7 @@
 
 **享元模式**是一种结构型设计模式， 它摒弃了在每个对象中保存所有数据的方式， 通过共享多个对象所共有的相同状态， 让你能在有限的内存容量中载入更多对象。 
 
-![享元设计模式](https://refactoringguru.cn/images/patterns/content/flyweight/flyweight-zh.png?id=3454f49363769767c6ff3500cf9f4889)
+![享元设计模式](../imgs/flyweight/flyweight-zh.png)
 
 ## 问题
 
@@ -14,13 +14,13 @@
 
 真正的问题与粒子系统有关。 每个粒子 （一颗子弹、 一枚导弹或一块弹片） 都由包含完整数据的独立对象来表示。 当玩家在游戏中鏖战进入高潮后的某一时刻， 游戏将无法在剩余内存中载入新建粒子， 于是程序就崩溃了。
 
-![享元模式问题](https://refactoringguru.cn/images/patterns/diagrams/flyweight/problem-zh.png?id=af96019d13fa27a76c3bc0164ede262a)
+![享元模式问题](../imgs/flyweight/problem-zh.png)
 
 ## 解决方案
 
 仔细观察 `粒子`Particle类， 你可能会注意到颜色 （color） 和精灵图 （sprite） 这两个成员变量所消耗的内存要比其他变量多得多。 更糟糕的是， 对于所有的粒子来说， 这两个成员变量所存储的数据几乎完全一样 （比如所有子弹的颜色和精灵图都一样）。 
 
-![享元模式的解决方案](https://refactoringguru.cn/images/patterns/diagrams/flyweight/solution1-zh.png?id=68634a0aa0dc94ea8d657747140abe4e)
+![享元模式的解决方案](../imgs/flyweight/solution1-zh.png)
 
 每个粒子的另一些状态 （坐标、 移动矢量和速度） 则是不同的。 因为这些成员变量的数值会不断变化。 这些数据代表粒子在存续期间不断变化的情景， 但每个粒子的颜色和精灵图则会保持不变。
 
@@ -28,7 +28,7 @@
 
 享元模式建议不在对象中存储外在状态， 而是将其传递给依赖于它的一个特殊方法。 程序只在对象中保存内在状态， 以方便在不同情景下重用。 这些对象的区别仅在于其内在状态 （与外在状态相比， 内在状态的变体要少很多）， 因此你所需的对象数量会大大削减。
 
-![享元模式的解决方案](https://refactoringguru.cn/images/patterns/diagrams/flyweight/solution3-zh.png?id=56d1d3bafd2d241952f162483ecd8ccf)
+![享元模式的解决方案](../imgs/flyweight/solution3-zh.png)
 
 让我们回到游戏中。 假如能从粒子类中抽出外在状态， 那么我们只需三个不同的对象 （子弹、 导弹和弹片） 就能表示游戏中的所有粒子。 你现在很可能已经猜到了， 我们将这样一个仅存储内在状态的对象称为享元。
 
@@ -38,7 +38,7 @@
 
 在我们的例子中， 容器对象就是主要的 `游戏`Game对象， 其会将所有粒子存储在名为 `粒子`particles的成员变量中。 为了能将外在状态移动到这个类中， 你需要创建多个数组成员变量来存储每个粒子的坐标、 方向矢量和速度。 除此之外， 你还需要另一个数组来存储指向代表粒子的特定享元的引用。 这些数组必须保持同步， 这样你才能够使用同一索引来获取关于某个粒子的所有数据。 
 
-![享元模式的解决方案](https://refactoringguru.cn/images/patterns/diagrams/flyweight/solution2-zh.png?id=454812ef83d91d5fb432932fa97a07e4)
+![享元模式的解决方案](../imgs/flyweight/solution2-zh.png)
 
 更优雅的解决方案是创建独立的情景类来存储外在状态和对享元对象的引用。 在该方法中， 容器类只需包含一个数组。
 
@@ -56,9 +56,9 @@
 
 ## 享元模式结构
 
-![享元设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/flyweight/structure.png?id=c1e7e1748f957a4792822f902bc1d420)
+![享元设计模式的结构](../imgs/flyweight/structure.png)
 
-![享元设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/flyweight/structure-indexed.png?id=aa490792baa26b04464dacbc1f4a19cd)
+![享元设计模式的结构](../imgs/flyweight/structure-indexed.png)
 
 - 
 享元模式只是一种优化。 在应用该模式之前， 你要确定程序中存在与大量类似对象同时占用内存相关的内存消耗问题， 并且确保该问题无法使用其他更好的方式来解决。 
@@ -77,7 +77,7 @@
 
 在本例中， **享元**模式能有效减少在画布上渲染数百万个树状对象时所需的内存。 
 
-![享元模式的示例](https://refactoringguru.cn/images/patterns/diagrams/flyweight/example.png?id=0818d078c1a79f373e96397f37b7ee06)
+![享元模式的示例](../imgs/flyweight/example.png)
 
 该模式从主要的 `树`Tree类中抽取内在状态， 并将其移动到享元类 `树种类`TreeType之中。 
 

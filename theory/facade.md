@@ -4,7 +4,7 @@
 
 **外观模式**是一种结构型设计模式， 能为程序库、 框架或其他复杂类提供一个简单的接口。 
 
-![外观设计模式](https://refactoringguru.cn/images/patterns/content/facade/facade.png?id=1f4be17305b6316fbd548edf1937ac3b)
+![外观设计模式](../imgs/facade/facade.png)
 
 ## 问题
 
@@ -22,7 +22,7 @@
 
 ## 真实世界类比
 
-![电话购物的示例](https://refactoringguru.cn/images/patterns/diagrams/facade/live-example-zh.png?id=2dd7a77c9f6b9569f79ba0260291d89d)
+![电话购物的示例](../imgs/facade/live-example-zh.png)
 
 电话购物。
 
@@ -30,9 +30,9 @@
 
 ## 外观模式结构
 
-![外观设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/facade/structure.png?id=258401362234ac77a2aaf1cde62339e7)
+![外观设计模式的结构](../imgs/facade/structure.png)
 
-![外观设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/facade/structure-indexed.png?id=2da06d6b850701ea15cf72f9d2642fb8)
+![外观设计模式的结构](../imgs/facade/structure-indexed.png)
 
 - 
 **外观**（Facade） 提供了一种访问特定子系统功能的便捷方式， 其了解如何重定向客户端请求， 知晓如何操作一切活动部件。
@@ -47,7 +47,7 @@
 
 在本例中， **外观**模式简化了客户端与复杂视频转换框架之间的交互。 
 
-![外观模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/facade/example.png?id=2249d134e3ff83819dfc19032f02eced)
+![外观模式示例的结构](../imgs/facade/example.png)
 
 使用单个外观类隔离多重依赖的示例
 

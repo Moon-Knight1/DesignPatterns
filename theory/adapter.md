@@ -4,7 +4,7 @@
 
 **适配器模式**是一种结构型设计模式， 它能使接口不兼容的对象能够相互合作。 
 
-![适配器设计模式](https://refactoringguru.cn/images/patterns/content/adapter/adapter-zh.png?id=14fe558f1044c85e92ace3bc91a8c59f)
+![适配器设计模式](../imgs/adapter/adapter-zh.png)
 
 ## 问题
 
@@ -12,7 +12,7 @@
 
 在开发过程中， 你决定在程序中整合一个第三方智能分析函数库。 但是遇到了一个问题， 那就是分析函数库只兼容 JSON 格式的数据。
 
-![整合分析函数库之前的程序结构](https://refactoringguru.cn/images/patterns/diagrams/adapter/problem-zh.png?id=05b4229167bc0d74a095e38e419dd1ed)
+![整合分析函数库之前的程序结构](../imgs/adapter/problem-zh.png)
 
 你无法 “直接” 使用分析函数库， 因为它所需的输入数据格式与你的程序不兼容。
 
@@ -32,13 +32,13 @@
 
 有时你甚至可以创建一个双向适配器来实现双向转换调用。
 
-![适配器解决方案](https://refactoringguru.cn/images/patterns/diagrams/adapter/solution-zh.png?id=52af7bf3841ac7f393ffb254675c4da2)
+![适配器解决方案](../imgs/adapter/solution-zh.png)
 
 让我们回到股票市场程序。 为了解决数据格式不兼容的问题， 你可以为分析函数库中的每个类创建将 XML 转换为 JSON 格式的适配器， 然后让客户端仅通过这些适配器来与函数库进行交流。 当某个适配器被调用时， 它会将传入的 XML 数据转换为 JSON 结构， 并将其传递给被封装分析对象的相应方法。
 
 ## 真实世界类比
 
-![适配器模式的示例](https://refactoringguru.cn/images/patterns/content/adapter/adapter-comic-1-zh.png?id=efe0a788204ad09ef2bbd40fe861b0ee)
+![适配器模式的示例](../imgs/adapter/adapter-comic-1-zh.png)
 
 出国旅行前后的旅行箱。
 
@@ -50,9 +50,9 @@
 
 实现时使用了构成原则： 适配器实现了其中一个对象的接口， 并对另一个对象进行封装。 所有流行的编程语言都可以实现适配器。
 
-![适配器设计模式的结构（对象适配器）](https://refactoringguru.cn/images/patterns/diagrams/adapter/structure-object-adapter.png?id=33dffbe3aece294162440c7ddd3d5d4f)
+![适配器设计模式的结构（对象适配器）](../imgs/adapter/structure-object-adapter.png)
 
-![适配器设计模式的结构（对象适配器）](https://refactoringguru.cn/images/patterns/diagrams/adapter/structure-object-adapter-indexed.png?id=a20b311948b361a058097e5bcdbf067a)
+![适配器设计模式的结构（对象适配器）](../imgs/adapter/structure-object-adapter-indexed.png)
 
 - 
 **客户端**（Client） 是包含当前程序业务逻辑的类。
@@ -69,9 +69,9 @@
 
 这一实现使用了继承机制： 适配器同时继承两个对象的接口。 请注意， 这种方式仅能在支持多重继承的编程语言中实现， 例如 C++。
 
-![适配器设计模式（类适配器）](https://refactoringguru.cn/images/patterns/diagrams/adapter/structure-class-adapter.png?id=e1c60240508146ed3b98ac562cc8e510)
+![适配器设计模式（类适配器）](../imgs/adapter/structure-class-adapter.png)
 
-![适配器设计模式（类适配器）](https://refactoringguru.cn/images/patterns/diagrams/adapter/structure-class-adapter-indexed.png?id=250b5c485a7dfba7c16b89a9201538fb)
+![适配器设计模式（类适配器）](../imgs/adapter/structure-class-adapter-indexed.png)
 
 - 
 **类适配器**不需要封装任何对象， 因为它同时继承了客户端和服务的行为。 适配功能在重写的方法中完成。 最后生成的适配器可替代已有的客户端类进行使用。
@@ -80,7 +80,7 @@
 
 下列**适配器**模式演示基于经典的 “方钉和圆孔” 问题。 
 
-![适配器模式结构的示例](https://refactoringguru.cn/images/patterns/diagrams/adapter/example.png?id=9d2b6857ce256f2c669383ce4df3d0aa)
+![适配器模式结构的示例](../imgs/adapter/example.png)
 
 让方钉适配圆孔。
 

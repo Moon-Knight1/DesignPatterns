@@ -4,7 +4,7 @@
 
 **模板方法模式**是一种行为设计模式， 它在超类中定义了一个算法的框架， 允许子类在不修改结构的情况下重写算法的特定步骤。 
 
-![模板方法设计模式](https://refactoringguru.cn/images/patterns/content/template-method/template-method.png?id=eee9461742f832814f19612ccf472819)
+![模板方法设计模式](../imgs/template-method/template-method.png)
 
 ## 问题
 
@@ -12,7 +12,7 @@
 
 该程序的首个版本仅支持 DOC 文件。 在接下来的一个版本中， 程序能够支持 CSV 文件。 一个月后， 你 “教会” 了程序从 PDF 文件中抽取数据。
 
-![数据挖掘类包含许多重复代码](https://refactoringguru.cn/images/patterns/diagrams/template-method/problem.png?id=60fa4f735c467ac1c9438231a1782807)
+![数据挖掘类包含许多重复代码](../imgs/template-method/problem.png)
 
 数据挖掘类中包含许多重复代码。
 
@@ -26,7 +26,7 @@
 
 让我们考虑如何在数据挖掘应用中实现上述方案。 我们可为图中的三个解析算法创建一个基类， 该类将定义调用了一系列不同文档处理步骤的模板方法。
 
-![模板方法定义了算法的框架](https://refactoringguru.cn/images/patterns/diagrams/template-method/solution-zh.png?id=413e3df47812a28320e057cc95ba5e96)
+![模板方法定义了算法的框架](../imgs/template-method/solution-zh.png)
 
 模板方法将算法分解为步骤， 并允许子类重写这些步骤， 而非重写实际的模板方法。
 
@@ -43,7 +43,7 @@
 
 ## 真实世界类比
 
-![建造大型房屋](https://refactoringguru.cn/images/patterns/diagrams/template-method/live-example.png?id=2485d52852f87da06c9cc0e2fd257d6a)
+![建造大型房屋](../imgs/template-method/live-example.png)
 
 可对典型的建筑方案进行微调以更好地满足客户需求。
 
@@ -53,9 +53,9 @@
 
 ## 模板方法模式结构
 
-![模板方法设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/template-method/structure.png?id=924692f994bff6578d8408d90f6fc459)
+![模板方法设计模式的结构](../imgs/template-method/structure.png)
 
-![模板方法设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/template-method/structure-indexed.png?id=4ced6107519bc66710d2f05c0f4097a1)
+![模板方法设计模式的结构](../imgs/template-method/structure-indexed.png)
 
 - 
 **抽象类**（AbstractClass） 会声明作为算法步骤的方法， 以及依次调用它们的实际模板方法。 算法步骤可以被声明为`抽象`类型， 也可以提供一些默认实现。
@@ -66,7 +66,7 @@
 
 本例中的**模板方法**模式为一款简单策略游戏中人工智能的不同分支提供 “框架”。 
 
-![模板方法模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/template-method/example.png?id=c0ce5cc8070925a1cd345fac6afa16b6)
+![模板方法模式示例的结构](../imgs/template-method/example.png)
 
 一款简单游戏的 AI 类。
 

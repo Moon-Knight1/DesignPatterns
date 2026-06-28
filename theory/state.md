@@ -4,13 +4,13 @@
 
 **状态模式**是一种行为设计模式， 让你能在一个对象的内部状态变化时改变其行为， 使其看上去就像改变了自身所属的类一样。 
 
-![状态设计模式](https://refactoringguru.cn/images/patterns/content/state/state-zh.png?id=ce3a5ecb935f40517ef6e3657a1fdb37)
+![状态设计模式](../imgs/state/state-zh.png)
 
 ## 问题
 
 状态模式与**有限状态机** 的概念紧密相关。 
 
-![有限状态机](https://refactoringguru.cn/images/patterns/diagrams/state/problem1.png?id=503968745461a0970d1fbb4362dc186f)
+![有限状态机](../imgs/state/problem1.png)
 
 有限状态机。
 
@@ -22,7 +22,7 @@
 - 处于 `审阅中`状态时， 如果当前用户是管理员， 它会公开发布文档。
 - 处于 `已发布`状态时， 它不会进行任何操作。
 
-![文档对象的全部状态](https://refactoringguru.cn/images/patterns/diagrams/state/problem2-zh.png?id=d0093053a492c104522c9a8e7a9a6d60)
+![文档对象的全部状态](../imgs/state/problem2-zh.png)
 
 文档对象的全部状态和转移。
 
@@ -56,7 +56,7 @@ class Document is
 
 原始对象被称为*上下文* （context）， 它并不会自行实现所有行为， 而是会保存一个指向表示当前状态的状态对象的引用， 且将所有与状态相关的工作委派给该对象。 
 
-![文档将工作委派给一个状态对象](https://refactoringguru.cn/images/patterns/diagrams/state/solution-zh.png?id=e8982c5f6ae775866e39e6226a0267dc)
+![文档将工作委派给一个状态对象](../imgs/state/solution-zh.png)
 
 文档将工作委派给一个状态对象。
 
@@ -74,9 +74,9 @@ class Document is
 
 ## 状态模式结构
 
-![状态设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/state/structure-zh.png?id=76cb20b2f7a6abcf79c26dd1021b6d8a)
+![状态设计模式的结构](../imgs/state/structure-zh.png)
 
-![状态设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/state/structure-zh-indexed.png?id=f9248b4414f65272f23aad8cbf785873)
+![状态设计模式的结构](../imgs/state/structure-zh-indexed.png)
 
 - 
 **上下文**（Context） 保存了对于一个具体状态对象的引用， 并会将所有与该状态相关的工作委派给它。 上下文通过状态接口与状态对象交互， 且会提供一个设置器用于传递新的状态对象。
@@ -91,7 +91,7 @@ class Document is
 
 在本例中， **状态**模式将根据当前回放状态， 让媒体播放器中的相同控件完成不同的行为。 
 
-![状态模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/state/example.png?id=1ffdb109b3ebb85d223b9d1651d2034c)
+![状态模式示例的结构](../imgs/state/example.png)
 
 使用状态对象更改对象行为的示例。
 

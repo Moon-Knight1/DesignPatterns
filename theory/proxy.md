@@ -4,13 +4,13 @@
 
 **代理模式**是一种结构型设计模式， 让你能够提供对象的替代品或其占位符。 代理控制着对于原对象的访问， 并允许在将请求提交给对象前后进行一些处理。 
 
-![代理设计模式](https://refactoringguru.cn/images/patterns/content/proxy/proxy.png?id=efece4647fb11e3f7539291796327666)
+![代理设计模式](../imgs/proxy/proxy.png)
 
 ## 问题
 
 为什么要控制对于某个对象的访问呢？ 举个例子： 有这样一个消耗大量系统资源的巨型对象， 你只是偶尔需要使用它， 并非总是需要。
 
-![代理模式解决的问题](https://refactoringguru.cn/images/patterns/diagrams/proxy/problem-zh.png?id=e76c3cf01a572cb0a945a9bcaaee17c5)
+![代理模式解决的问题](../imgs/proxy/problem-zh.png)
 
 数据库查询有可能会非常缓慢。
 
@@ -22,7 +22,7 @@
 
 代理模式建议新建一个与原服务对象接口相同的代理类， 然后更新应用以将代理对象传递给所有原始对象客户端。 代理类接收到客户端请求后会创建实际的服务对象， 并将所有工作委派给它。
 
-![代理模式的解决方案](https://refactoringguru.cn/images/patterns/diagrams/proxy/solution-zh.png?id=d0ace8ab2ec4ff78e0620c94e4ff2eda)
+![代理模式的解决方案](../imgs/proxy/solution-zh.png)
 
 代理将自己伪装成数据库对象， 可在客户端或实际数据库对象不知情的情况下处理延迟初始化和缓存查询结果的工作。
 
@@ -30,7 +30,7 @@
 
 ## 真实世界类比
 
-![信用卡是一大捆现金的代理](https://refactoringguru.cn/images/patterns/diagrams/proxy/live-example-zh.png?id=733f68f516347807212f6ff28c970d06)
+![信用卡是一大捆现金的代理](../imgs/proxy/live-example-zh.png)
 
 信用卡和现金在支付过程中的用处相同。
 
@@ -38,9 +38,9 @@
 
 ## 代理模式结构
 
-![代理设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/proxy/structure.png?id=f2478a82a84e1a1e512a8414bf1abd1c)
+![代理设计模式的结构](../imgs/proxy/structure.png)
 
-![代理设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/proxy/structure-indexed.png?id=e56d420f31925b3d41348c5036d3cd64)
+![代理设计模式的结构](../imgs/proxy/structure-indexed.png)
 
 - 
 **服务接口**（Service Interface） 声明了服务接口。 代理必须遵循该接口才能伪装成服务对象。
@@ -55,7 +55,7 @@
 
 本例演示如何使用**代理**模式在第三方腾讯视频 （TencentVideo， 代码示例中记为 TV） 程序库中添加延迟初始化和缓存。 
 
-![代理模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/proxy/example-zh.png?id=7d99b85a7caef20bc3f4f2ca97f8bdc3)
+![代理模式示例的结构](../imgs/proxy/example-zh.png)
 
 使用代理缓冲服务结果。
 

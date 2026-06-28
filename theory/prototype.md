@@ -4,7 +4,7 @@
 
 **原型模式**是一种创建型设计模式， 使你能够复制已有对象， 而又无需使代码依赖它们所属的类。 
 
-![原型设计模式](https://refactoringguru.cn/images/patterns/content/prototype/prototype.png?id=e912b1ada20bbf7b2ffc09e93b9fab20)
+![原型设计模式](../imgs/prototype/prototype.png)
 
 ## 问题
 
@@ -12,7 +12,7 @@
 
 不错！ 但有个小问题。 并非所有对象都能通过这种方式进行复制， 因为有些对象可能拥有私有成员变量， 它们在对象本身以外是不可见的。
 
-![从外部复制对象会遇到什么问题？](https://refactoringguru.cn/images/patterns/content/prototype/prototype-comic-1-zh.png?id=8d65948003f95530ffa90c983a6da786)
+![从外部复制对象会遇到什么问题？](../imgs/prototype/prototype-comic-1-zh.png)
 
  “从外部” 复制对象[并非](https://refactoringguru.cn/cargo-cult)总是可行。 
 
@@ -26,7 +26,7 @@
 
 支持克隆的对象即为*原型*。 当你的对象有几十个成员变量和几百种类型时， 对其进行克隆甚至可以代替子类的构造。 
 
-![预生成原型](https://refactoringguru.cn/images/patterns/content/prototype/prototype-comic-2-zh.png?id=e41733fb200454870b15c89cf053e751)
+![预生成原型](../imgs/prototype/prototype-comic-2-zh.png)
 
 预生成原型可以代替子类的构造。
 
@@ -36,7 +36,7 @@
 
 现实生活中， 产品在得到大规模生产前会使用原型进行各种测试。 但在这种情况下， 原型只是一种被动的工具， 不参与任何真正的生产活动。
 
-![细胞分裂](https://refactoringguru.cn/images/patterns/content/prototype/prototype-comic-3-zh.png?id=b5acc5e78a6e3c9b6cd5904bdb2a4dc3)
+![细胞分裂](../imgs/prototype/prototype-comic-3-zh.png)
 
 一个细胞的分裂。
 
@@ -46,9 +46,9 @@
 
 #### 基本实现
 
-![原型设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/prototype/structure.png?id=088102c5e9785ff45debbbce86f4df81)
+![原型设计模式的结构](../imgs/prototype/structure.png)
 
-![原型设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/prototype/structure-indexed.png?id=0e1c809842f5c43aca0541a2eba1f844)
+![原型设计模式的结构](../imgs/prototype/structure-indexed.png)
 
 - 
 **原型**（Prototype） 接口将对克隆方法进行声明。 在绝大多数情况下， 其中只会有一个名为`clone`克隆的方法。
@@ -59,9 +59,9 @@
 
 #### 原型注册表实现
 
-![原型注册表](https://refactoringguru.cn/images/patterns/diagrams/prototype/structure-prototype-cache.png?id=609c2af5d14ed55dcbb218a00f98e7d5)
+![原型注册表](../imgs/prototype/structure-prototype-cache.png)
 
-![原型注册表](https://refactoringguru.cn/images/patterns/diagrams/prototype/structure-prototype-cache-indexed.png?id=10a4a84a1a318f59dbc2b806fc936d04)
+![原型注册表](../imgs/prototype/structure-prototype-cache-indexed.png)
 
 - 
 **原型注册表**（Prototype Registry） 提供了一种访问常用原型的简单方法， 其中存储了一系列可供随时复制的预生成对象。 最简单的注册表原型是一个`名称 → 原型`的哈希表。 但如果需要使用名称以外的条件进行搜索， 你可以创建更加完善的注册表版本。
@@ -70,7 +70,7 @@
 
 在本例中， **原型**模式能让你生成完全相同的几何对象副本， 同时无需代码与对象所属类耦合。 
 
-![原型模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/prototype/example.png?id=47bc6c1058cb100b81e675b5ca6bda6c)
+![原型模式示例的结构](../imgs/prototype/example.png)
 
 克隆一系列位于同一类层次结构中的对象。
 

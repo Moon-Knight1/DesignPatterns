@@ -1,10 +1,8 @@
-# 抽象工厂模式
-
 ## 意图
 
 **抽象工厂模式**是一种创建型设计模式， 它能创建一系列相关的对象， 而无需指定其具体类。 
 
-![抽象工厂模式](https://refactoringguru.cn/images/patterns/content/abstract-factory/abstract-factory-zh.png?id=6827841db99dbb76abf11ec8755e0bd4)
+![抽象工厂模式](../imgs/abstract-factory/abstract-factory-zh.png)
 
 ## 问题
 
@@ -15,13 +13,13 @@
 - 
 系列产品的不同变体。 例如， 你可以使用 `现代`Modern 、 `维多利亚`Victorian 、 `装饰风艺术`ArtDeco等风格生成`椅子`、 `沙发`和`咖啡桌`。
 
-![生成不同风格的系列家具。](https://refactoringguru.cn/images/patterns/diagrams/abstract-factory/problem-zh.png?id=1ce1f5f6b7e0e1e3183d2286a8406f39)
+![生成不同风格的系列家具。](../imgs/abstract-factory/problem-zh.png)
 
 系列产品及其不同变体。
 
 你需要设法单独生成每件家具对象， 这样才能确保其风格一致。 如果顾客收到的家具风格不一样， 他们可不会开心。
 
-![](https://refactoringguru.cn/images/patterns/content/abstract-factory/abstract-factory-comic-1-zh.png?id=bab9afe582bc339aa344134474acc68a)
+![](../imgs/abstract-factory/abstract-factory-comic-1-zh.png)
 
 现代风格的沙发和维多利亚风格的椅子不搭。
 
@@ -31,13 +29,13 @@
 
 首先， 抽象工厂模式建议为系列中的每件产品明确声明接口 （例如椅子、 沙发或咖啡桌）。 然后， 确保所有产品变体都继承这些接口。 例如， 所有风格的椅子都实现 `椅子`接口； 所有风格的咖啡桌都实现 `咖啡桌`接口， 以此类推。 
 
-![椅子类的层次结构](https://refactoringguru.cn/images/patterns/diagrams/abstract-factory/solution1.png?id=71f2018d8bb443b9cce90d57110675e3)
+![椅子类的层次结构](../imgs/abstract-factory/solution1.png)
 
 同一对象的所有变体都必须放置在同一个类层次结构之中。
 
 接下来， 我们需要声明*抽象工厂*——包含系列中所有产品构造方法的接口。 例如 `createChair`创建椅子 、  `createSofa`创建沙发和 `createCoffeeTable`创建咖啡桌 。 这些方法必须返回**抽象**产品类型， 即我们之前抽取的那些接口：  `椅子` ，  `沙发`和 `咖啡桌`等等。 
 
-![工厂类的层次结构](https://refactoringguru.cn/images/patterns/diagrams/abstract-factory/solution2.png?id=53975d6e4714c6f942633a879f7ac571)
+![工厂类的层次结构](../imgs/abstract-factory/solution2.png)
 
 每个具体工厂类都对应一个特定的产品变体。
 
@@ -45,7 +43,7 @@
 
 客户端代码可以通过相应的抽象接口调用工厂和产品类。 你无需修改实际客户端代码， 就能更改传递给客户端的工厂类， 也能更改客户端代码接收的产品变体。
 
-![](https://refactoringguru.cn/images/patterns/content/abstract-factory/abstract-factory-comic-2-zh.png?id=94f5e51a62b252865eaa6f821d13c68c)
+![](../imgs/abstract-factory/abstract-factory-comic-2-zh.png)
 
 客户端无需了解其所调用工厂的具体类信息。
 
@@ -55,9 +53,9 @@
 
 ## 抽象工厂模式结构
 
-![抽象工厂设计模式](https://refactoringguru.cn/images/patterns/diagrams/abstract-factory/structure.png?id=a3112cdd98765406af94595a3c5e7762)
+![抽象工厂设计模式](../imgs/abstract-factory/structure.png)
 
-![抽象工厂设计模式](https://refactoringguru.cn/images/patterns/diagrams/abstract-factory/structure-indexed.png?id=6ae1c99cbd90cf58753c633624fb1a04)
+![抽象工厂设计模式](../imgs/abstract-factory/structure-indexed.png)
 
 - 
 **抽象产品**（Abstract Product） 为构成系列产品的一组不同但相关的产品声明接口。
@@ -74,7 +72,7 @@
 
 下面例子通过应用**抽象工厂**模式， 使得客户端代码无需与具体 UI 类耦合， 就能创建跨平台的 UI 元素， 同时确保所创建的元素与指定的操作系统匹配。 
 
-![抽象工厂模式示例的类图](https://refactoringguru.cn/images/patterns/diagrams/abstract-factory/example.png?id=5928a61d18bf00b047463471c599100a)
+![抽象工厂模式示例的类图](../imgs/abstract-factory/example.png)
 
 跨平台 UI 类示例。
 

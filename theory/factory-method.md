@@ -4,7 +4,7 @@
 
 **工厂方法模式**是一种创建型设计模式， 其在父类中提供一个创建对象的方法， 允许子类决定实例化对象的类型。 
 
-![工厂方法模式](https://refactoringguru.cn/images/patterns/content/factory-method/factory-method-zh.png?id=eb7978e462e88f2ef03aec83d7510389)
+![工厂方法模式](../imgs/factory-method/factory-method-zh.png)
 
 ## 问题
 
@@ -12,7 +12,7 @@
 
 一段时间后， 这款应用变得极受欢迎。 你每天都能收到十几次来自海运公司的请求， 希望应用能够支持海上物流功能。
 
-![在程序中新增一个运输类会遇到问题](https://refactoringguru.cn/images/patterns/diagrams/factory-method/problem1-zh.png?id=f5c316dc94303f8562f2b3d48008ee8b)
+![在程序中新增一个运输类会遇到问题](../imgs/factory-method/problem1-zh.png)
 
 如果代码其余部分与现有类已经存在耦合关系， 那么向程序中添加新类其实并没有那么容易。
 
@@ -24,7 +24,7 @@
 
 工厂方法模式建议使用特殊的*工厂*方法代替对于对象构造函数的直接调用 （即使用 `new`运算符）。 不用担心， 对象仍将通过 `new`运算符创建， 只是该运算符改在工厂方法中调用罢了。 工厂方法返回的对象通常被称作 “产品”。 
 
-![创建者类结构](https://refactoringguru.cn/images/patterns/diagrams/factory-method/solution1.png?id=fc756d2af296b5b4d482e548214d08ef)
+![创建者类结构](../imgs/factory-method/solution1.png)
 
 子类可以修改工厂方法返回的对象类型。
 
@@ -32,13 +32,13 @@
 
 但有一点需要注意:仅当这些产品具有共同的基类或者接口时， 子类才能返回不同类型的产品， 同时基类中的工厂方法还应将其返回类型声明为这一共有接口。
 
-![产品对象层次结构](https://refactoringguru.cn/images/patterns/diagrams/factory-method/solution2-zh.png?id=fe0e663d7c2c9ec059c27b0bd531a7cc)
+![产品对象层次结构](../imgs/factory-method/solution2-zh.png)
 
 所有产品都必须使用同一接口。
 
 举例来说，  `卡车`Truck和 `轮船`Ship类都必须实现 `运输`Transport接口， 该接口声明了一个名为 `deliver`交付的方法。 每个类都将以不同的方式实现该方法： 卡车走陆路交付货物， 轮船走海路交付货物。  `陆路运输`RoadLogistics类中的工厂方法返回卡车对象， 而 `海路运输`SeaLogistics类则返回轮船对象。 
 
-![使用工厂方法模式后的代码结构](https://refactoringguru.cn/images/patterns/diagrams/factory-method/solution3-zh.png?id=9c410cba8016db64975735bfbd4b5b28)
+![使用工厂方法模式后的代码结构](../imgs/factory-method/solution3-zh.png)
 
 只要产品类实现一个共同的接口， 你就可以将其对象传递给客户代码， 而无需提供额外数据。
 
@@ -46,9 +46,9 @@
 
 ## 工厂方法模式结构
 
-![工厂方法模式结构](https://refactoringguru.cn/images/patterns/diagrams/factory-method/structure.png?id=4cba0803f42517cfe8548c9bc7dc4c9b)
+![工厂方法模式结构](../imgs/factory-method/structure.png)
 
-![工厂方法模式结构](https://refactoringguru.cn/images/patterns/diagrams/factory-method/structure-indexed.png?id=4c603207859ca1f939b17b60a3a2e9e0)
+![工厂方法模式结构](../imgs/factory-method/structure-indexed.png)
 
 - 
 **产品**（Product） 将会对接口进行声明。 对于所有由创建者及其子类构建的对象， 这些接口都是通用的。
@@ -63,7 +63,7 @@
 
 以下示例演示了如何使用**工厂方法**开发跨平台 UI （用户界面） 组件， 并同时避免客户代码与具体 UI 类之间的耦合。 
 
-![工厂方法模式示例结构](https://refactoringguru.cn/images/patterns/diagrams/factory-method/example.png?id=67db9a5cb817913444efcb1c067c9835)
+![工厂方法模式示例结构](../imgs/factory-method/example.png)
 
 跨平台对话框示例。
 

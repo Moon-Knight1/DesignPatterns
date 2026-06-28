@@ -4,7 +4,7 @@
 
 **组合模式**是一种结构型设计模式， 你可以使用它将对象组合成树状结构， 并且能像使用独立对象一样使用它们。 
 
-![组合设计模式](https://refactoringguru.cn/images/patterns/content/composite/composite.png?id=73bcf0d94db360b636cd745f710d19db)
+![组合设计模式](../imgs/composite/composite.png)
 
 ## 问题
 
@@ -14,7 +14,7 @@
 
 假设你希望在这些类的基础上开发一个定购系统。 订单中可以包含无包装的简单产品， 也可以包含装满产品的盒子…… 以及其他盒子。 此时你会如何计算每张订单的总价格呢？
 
-![复杂订单的结构](https://refactoringguru.cn/images/patterns/diagrams/composite/problem-zh.png?id=063ea216d0f35f0a7560a22406ba931b)
+![复杂订单的结构](../imgs/composite/problem-zh.png)
 
 订单中可能包括各种产品， 这些产品放置在盒子中， 然后又被放入一层又一层更大的盒子中。 整个结构看上去像是一棵倒过来的树。
 
@@ -26,7 +26,7 @@
 
 那么方法该如何设计呢？ 对于一个产品， 该方法直接返回其价格； 对于一个盒子， 该方法遍历盒子中的所有项目， 询问每个项目的价格， 然后返回该盒子的总价格。 如果其中某个项目是小一号的盒子， 那么当前盒子也会遍历其中的所有项目， 以此类推， 直到计算出所有内部组成部分的价格。 你甚至可以在盒子的最终价格中增加额外费用， 作为该盒子的包装费用。
 
-![组合模式建议的解决方案](https://refactoringguru.cn/images/patterns/content/composite/composite-comic-1-zh.png?id=845971cd0cc64fb0f3e303f393a9102c)
+![组合模式建议的解决方案](../imgs/composite/composite-comic-1-zh.png)
 
 组合模式以递归方式处理对象树中的所有项目
 
@@ -34,7 +34,7 @@
 
 ## 真实世界类比
 
-![部队结构的例子](https://refactoringguru.cn/images/patterns/diagrams/composite/live-example.png?id=548a7cec45b493af66e8bfe524a137d3)
+![部队结构的例子](../imgs/composite/live-example.png)
 
 部队结构的例子。
 
@@ -42,9 +42,9 @@
 
 ## 组合模式结构
 
-![组合设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/composite/structure-zh.png?id=205c2c970f77efe15b681525e0c676d3)
+![组合设计模式的结构](../imgs/composite/structure-zh.png)
 
-![组合设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/composite/structure-zh-indexed.png?id=0fc4960b564ebffa57284eade9141f1a)
+![组合设计模式的结构](../imgs/composite/structure-zh-indexed.png)
 
 - 
 **组件**（Component） 接口描述了树中简单项目和复杂项目所共有的操作。
@@ -59,7 +59,7 @@
 
 在本例中， 我们将借助**组合**模式帮助你在图形编辑器中实现一系列的几何图形。 
 
-![组合模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/composite/example.png?id=98ba81d07c979038dd2ebf3c83a2e19f)
+![组合模式示例的结构](../imgs/composite/example.png)
 
 几何形状编辑器示例。
 

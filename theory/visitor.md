@@ -4,13 +4,13 @@
 
 **访问者模式**是一种行为设计模式， 它能将算法与其所作用的对象隔离开来。 
 
-![访问者设计模式](https://refactoringguru.cn/images/patterns/content/visitor/visitor.png?id=f36d100188340db7a18854ef7916f972)
+![访问者设计模式](../imgs/visitor/visitor.png)
 
 ## 问题
 
 假如你的团队开发了一款能够使用巨型图像中地理信息的应用程序。 图像中的每个节点既能代表复杂实体 （例如一座城市）， 也能代表更精细的对象 （例如工业区和旅游景点等）。 如果节点代表的真实对象之间存在公路， 那么这些节点就会相互连接。 在程序内部， 每个节点的类型都由其所属的类来表示， 每个特定的节点则是一个对象。
 
-![将图像导出为 XML](https://refactoringguru.cn/images/patterns/diagrams/visitor/problem1.png?id=e7076532da1e936f3519c63270da8454)
+![将图像导出为 XML](../imgs/visitor/problem1.png)
 
 将图像导出为 XML。
 
@@ -18,7 +18,7 @@
 
 但你不太走运， 系统架构师拒绝批准对已有节点类进行修改。 他认为这些代码已经是产品了， 不想冒险对其进行修改， 因为修改可能会引入潜在的缺陷。
 
-![所有节点的类中都必须添加导出至 XML 文件的方法](https://refactoringguru.cn/images/patterns/diagrams/visitor/problem2-zh.png?id=5d616a01031ba9b4b6f7b32000aa9330)
+![所有节点的类中都必须添加导出至 XML 文件的方法](../imgs/visitor/problem2-zh.png)
 
 所有节点的类中都必须添加导出至 XML 文件的方法， 但如果在修改代码的过程中引入了任何缺陷， 那么整个程序都会面临风险。
 
@@ -75,7 +75,7 @@ class Industry is
 
 ## 真实世界类比
 
-![保险代理](https://refactoringguru.cn/images/patterns/content/visitor/visitor-comic-1.png?id=7ee4fa8800f7c4df4e1aa3b1aca2b7f1)
+![保险代理](../imgs/visitor/visitor-comic-1.png)
 
 优秀的保险代理人总能为不同类型的团体提供不同的保单。
 
@@ -87,9 +87,9 @@ class Industry is
 
 ## 访问者模式结构
 
-![访问者设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/visitor/structure-zh.png?id=de4044077319b6a69f8ceb62b7704918)
+![访问者设计模式的结构](../imgs/visitor/structure-zh.png)
 
-![访问者设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/visitor/structure-zh-indexed.png?id=8ba073ef8dfe8cb6a78983dc785182be)
+![访问者设计模式的结构](../imgs/visitor/structure-zh-indexed.png)
 
 - 
 **访问者**（Visitor） 接口声明了一系列以对象结构的具体元素为参数的访问者方法。 如果编程语言支持重载， 这些方法的名称可以是相同的， 但是其参数一定是不同的。
@@ -106,7 +106,7 @@ class Industry is
 
 在本例中， **访问者**模式为几何图像层次结构添加了对于 XML 文件导出功能的支持。 
 
-![访问者模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/visitor/example.png?id=d66acd1b9096c47db17ab3bb82b54a59)
+![访问者模式示例的结构](../imgs/visitor/example.png)
 
 通过访问者对象将各种类型的对象导出为 XML 格式文件。
 

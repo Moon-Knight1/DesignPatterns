@@ -4,7 +4,7 @@
 
 **单例模式**是一种创建型设计模式， 让你能够保证一个类只有一个实例， 并提供一个访问该实例的全局节点。 
 
-![单例模式](https://refactoringguru.cn/images/patterns/content/singleton/singleton.png?id=108a0b9b5ea5c4426e0afa4504491d6f)
+![单例模式](../imgs/singleton/singleton.png)
 
 ## 问题
 
@@ -13,7 +13,7 @@
 - 
 **保证一个类只有一个实例**。 为什么会有人想要控制一个类所拥有的实例数量？ 最常见的原因是控制某些共享资源 （例如数据库或文件） 的访问权限。它的运作方式是这样的： 如果你创建了一个对象， 同时过一会儿后你决定再创建一个新对象， 此时你会获得之前已创建的对象， 而不是一个新对象。 注意， 普通构造函数无法实现上述行为， 因为构造函数的设计决定了它 **必须**总是返回一个新对象。
 
-![一个对象的全局访问节点](https://refactoringguru.cn/images/patterns/content/singleton/singleton-comic-1-zh.png?id=70da542e5e19f0df3dfc232b78e7816f)
+![一个对象的全局访问节点](../imgs/singleton/singleton-comic-1-zh.png)
 
 客户端甚至可能没有意识到它们一直都在使用同一个对象。
 
@@ -37,9 +37,9 @@
 
 ## 单例模式结构
 
-![单例模式结构](https://refactoringguru.cn/images/patterns/diagrams/singleton/structure-zh.png?id=207b153c1abb131ee4eb37dee6097e60)
+![单例模式结构](../imgs/singleton/structure-zh.png)
 
-![单例模式结构](https://refactoringguru.cn/images/patterns/diagrams/singleton/structure-zh-indexed.png?id=3a13ed8879c2a54d0947c2fa160addb8)
+![单例模式结构](../imgs/singleton/structure-zh-indexed.png)
 
 - 
 **单例**（Singleton） 类声明了一个名为`getInstance`获取实例的静态方法来返回其所属类的一个相同实例。单例的构造函数必须对客户端 （Client） 代码隐藏。 调用 `获取实例`方法必须是获取单例对象的唯一方式。

@@ -4,13 +4,13 @@
 
 **生成器模式**是一种创建型设计模式， 使你能够分步骤创建复杂对象。 该模式允许你使用相同的创建代码生成不同类型和形式的对象。 
 
-![生成器设计模式](https://refactoringguru.cn/images/patterns/content/builder/builder-zh.png?id=6889a9ff5dbc070a084e607447c136d7)
+![生成器设计模式](../imgs/builder/builder-zh.png)
 
 ## 问题
 
 假设有这样一个复杂对象， 在对其进行构造时需要对诸多成员变量和嵌套对象进行繁复的初始化工作。 这些初始化代码通常深藏于一个包含众多参数且让人基本看不懂的构造函数中； 甚至还有更糟糕的情况， 那就是这些代码散落在客户端代码的多个位置。
 
-![大量子类会带来新的问题](https://refactoringguru.cn/images/patterns/diagrams/builder/problem1.png?id=11e715c5c97811f848c48e0f399bb05e)
+![大量子类会带来新的问题](../imgs/builder/problem1.png)
 
 如果为每种可能的对象都创建一个子类， 这可能会导致程序变得过于复杂。
 
@@ -20,7 +20,7 @@
 
 另一种方法则无需生成子类。 你可以在 `房屋`基类中创建一个包括所有可能参数的超级构造函数， 并用它来控制房屋对象。 这种方法确实可以避免生成子类， 但它却会造成另外一个问题。 
 
-![可伸缩的构造函数](https://refactoringguru.cn/images/patterns/diagrams/builder/problem2.png?id=2e91039b6c7d2d2df6ee519983a3b036)
+![可伸缩的构造函数](../imgs/builder/problem2.png)
 
 拥有大量输入参数的构造函数也有缺陷： 这些参数也不是每次都要全部用上的。
 
@@ -30,7 +30,7 @@
 
 生成器模式建议将对象构造代码从产品类中抽取出来， 并将其放在一个名为*生成器*的独立对象中。 
 
-![应用生成器模式](https://refactoringguru.cn/images/patterns/diagrams/builder/solution1.png?id=8ce82137f8935998de802cae59e00e11)
+![应用生成器模式](../imgs/builder/solution1.png)
 
 生成器模式让你能够分步骤创建复杂对象。 生成器不允许其他对象访问正在创建中的产品。
 
@@ -40,7 +40,7 @@
 
 在这种情况下， 你可以创建多个不同的生成器， 用不同方式实现一组相同的创建步骤。 然后你就可以在创建过程中使用这些生成器 （例如按顺序调用多个构造步骤） 来生成不同类型的对象。
 
-![](https://refactoringguru.cn/images/patterns/content/builder/builder-comic-1-zh.png?id=c39eaef88b3718af5b6df2a7e0b48e46)
+![](../imgs/builder/builder-comic-1-zh.png)
 
 不同生成器以不同方式执行相同的任务。
 
@@ -50,7 +50,7 @@
 
 你可以进一步将用于创建产品的一系列生成器步骤调用抽取成为单独的*主管*类。 主管类可定义创建步骤的执行顺序， 而生成器则提供这些步骤的实现。 
 
-![](https://refactoringguru.cn/images/patterns/content/builder/builder-comic-2-zh.png?id=3658d16be763a2d634094996c4c839fa)
+![](../imgs/builder/builder-comic-2-zh.png)
 
 主管知道需要哪些创建步骤才能获得可正常使用的产品。
 
@@ -60,9 +60,9 @@
 
 ## 生成器模式结构
 
-![生成器设计模式结构](https://refactoringguru.cn/images/patterns/diagrams/builder/structure.png?id=fe9e23559923ea0657aa5fe75efef333)
+![生成器设计模式结构](../imgs/builder/structure.png)
 
-![生成器设计模式结构](https://refactoringguru.cn/images/patterns/diagrams/builder/structure-indexed.png?id=44b3d763ce91dbada5d8394ef777437f)
+![生成器设计模式结构](../imgs/builder/structure-indexed.png)
 
 - 
 **生成器**（Builder） 接口声明在所有类型生成器中通用的产品构造步骤。
@@ -79,7 +79,7 @@
 
 下面关于**生成器**模式的例子演示了你可以如何复用相同的对象构造代码来生成不同类型的产品——例如汽车 （Car）——及其相应的使用手册 （Manual）。 
 
-![生成器模式结构示例](https://refactoringguru.cn/images/patterns/diagrams/builder/example-zh.png?id=c2a85c1d5cda058822a8e46faa148c5e)
+![生成器模式结构示例](../imgs/builder/example-zh.png)
 
 分步骤制造汽车并制作对应型号用户使用手册的示例
 

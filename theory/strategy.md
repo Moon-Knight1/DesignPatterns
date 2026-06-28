@@ -4,7 +4,7 @@
 
 **策略模式**是一种行为设计模式， 它能让你定义一系列算法， 并将每种算法分别放入独立的类中， 以使算法的对象能够相互替换。 
 
-![策略设计模式](https://refactoringguru.cn/images/patterns/content/strategy/strategy.png?id=379bfba335380500375881a3da6507e0)
+![策略设计模式](../imgs/strategy/strategy.png)
 
 ## 问题
 
@@ -16,7 +16,7 @@
 
 而这只是个开始。 不久后， 你又要为骑行者规划路线。 又过了一段时间， 你又要为游览城市中的所有景点规划路线。
 
-![导游代码将变得非常臃肿](https://refactoringguru.cn/images/patterns/diagrams/strategy/problem.png?id=e5ca943e559a979bd31d20e232dc22b6)
+![导游代码将变得非常臃肿](../imgs/strategy/problem.png)
 
 导游代码将变得非常臃肿。
 
@@ -36,7 +36,7 @@
 
 因此， 上下文可独立于具体策略。 这样你就可在不修改上下文代码或其他策略的情况下添加新算法或修改已有算法了。
 
-![路线规划策略](https://refactoringguru.cn/images/patterns/diagrams/strategy/solution.png?id=0813a174b29a2ed5902d321aba28e5fc)
+![路线规划策略](../imgs/strategy/solution.png)
 
 路线规划策略。
 
@@ -46,7 +46,7 @@
 
 ## 真实世界类比
 
-![各种出行策略](https://refactoringguru.cn/images/patterns/content/strategy/strategy-comic-1-zh.png?id=48d1735482cac7a5c5225ca979e2bd2f)
+![各种出行策略](../imgs/strategy/strategy-comic-1-zh.png)
 
 各种前往机场的出行策略
 
@@ -54,9 +54,9 @@
 
 ## 策略模式结构
 
-![策略设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/strategy/structure.png?id=c6aa910c94960f35d100bfca02810ea1)
+![策略设计模式的结构](../imgs/strategy/structure.png)
 
-![策略设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/strategy/structure-indexed.png?id=ff55c5a6273cf82a5667f3cab5b605c7)
+![策略设计模式的结构](../imgs/strategy/structure-indexed.png)
 
 - 
 **上下文**（Context） 维护指向具体策略的引用， 且仅通过策略接口与该对象进行交流。

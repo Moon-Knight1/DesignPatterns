@@ -4,7 +4,7 @@
 
 **观察者模式**是一种行为设计模式， 允许你定义一种订阅机制， 可在对象事件发生时通知多个 “观察” 该对象的其他对象。 
 
-![观察者设计模式](https://refactoringguru.cn/images/patterns/content/observer/observer.png?id=6088e31e1b0d4a417506a66614dcf065)
+![观察者设计模式](../imgs/observer/observer.png)
 
 ## 问题
 
@@ -12,7 +12,7 @@
 
 顾客可以每天来商店看看产品是否到货。 但如果商品尚未到货时， 绝大多数来到商店的顾客都会空手而归。
 
-![访问商店或发送垃圾邮件](https://refactoringguru.cn/images/patterns/content/observer/observer-comic-1-zh.png?id=3d590140b01b145bcfb913eaf2efcbf6)
+![访问商店或发送垃圾邮件](../imgs/observer/observer-comic-1-zh.png)
 
 前往商店和发送垃圾邮件
 
@@ -26,7 +26,7 @@
 
 观察者模式建议你为发布者类添加订阅机制， 让每个对象都能订阅或取消订阅发布者事件流。 不要害怕！ 这并不像听上去那么复杂。 实际上， 该机制包括 1） 一个用于存储订阅者对象引用的列表成员变量； 2） 几个用于添加或删除该列表中订阅者的公有方法。
 
-![订阅机制](https://refactoringguru.cn/images/patterns/diagrams/observer/solution1-zh.png?id=dcecf95e748aa5b00bc955ca7882b292)
+![订阅机制](../imgs/observer/solution1-zh.png)
 
 订阅机制允许对象订阅事件通知。
 
@@ -36,7 +36,7 @@
 
 因此， 所有订阅者都必须实现同样的接口， 发布者仅通过该接口与订阅者交互。 接口中必须声明通知方法及其参数， 这样发布者在发出通知时还能传递一些上下文数据。
 
-![通知方法](https://refactoringguru.cn/images/patterns/diagrams/observer/solution2-zh.png?id=644f3aefc2df254cbd54b9df96d627d2)
+![通知方法](../imgs/observer/solution2-zh.png)
 
 发布者调用订阅者对象中的特定通知方法来通知订阅者。
 
@@ -44,7 +44,7 @@
 
 ## 真实世界类比
 
-![杂志和报纸订阅](https://refactoringguru.cn/images/patterns/content/observer/observer-comic-2-zh.png?id=1e88e82f81e16d03488b3e787ea0c3c2)
+![杂志和报纸订阅](../imgs/observer/observer-comic-2-zh.png)
 
 杂志和报纸订阅。
 
@@ -54,9 +54,9 @@
 
 ## 观察者模式结构
 
-![观察者设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/observer/structure.png?id=365b7e2b8fbecc8948f34b9f8f16f33c)
+![观察者设计模式的结构](../imgs/observer/structure.png)
 
-![观察者设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/observer/structure-indexed.png?id=2ca2c123503ede860740af2a22bc4b4d)
+![观察者设计模式的结构](../imgs/observer/structure-indexed.png)
 
 - 
 **发布者**（Publisher） 会向其他对象发送值得关注的事件。 事件会在发布者自身状态改变或执行特定行为后发生。 发布者中包含一个允许新订阅者加入和当前订阅者离开列表的订阅构架。
@@ -75,7 +75,7 @@
 
 在本例中， **观察者**模式允许文本编辑器对象将自身的状态改变通知给其他服务对象。 
 
-![观察者模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/observer/example.png?id=6d0603ab5a00e4463b81d9639cd746a2)
+![观察者模式示例的结构](../imgs/observer/example.png)
 
 将对象中发生的事件通知给其他对象。
 

@@ -4,13 +4,13 @@
 
 **迭代器模式**是一种行为设计模式， 让你能在不暴露集合底层表现形式 （列表、 栈和树等） 的情况下遍历集合中所有的元素。 
 
-![迭代器设计模式](https://refactoringguru.cn/images/patterns/content/iterator/iterator-zh.png?id=ba3edc72276bad8f9be832fcaae4e2a3)
+![迭代器设计模式](../imgs/iterator/iterator-zh.png)
 
 ## 问题
 
 集合是编程中最常使用的数据类型之一。 尽管如此， 集合只是一组对象的容器而已。
 
-![各种类型的集合](https://refactoringguru.cn/images/patterns/diagrams/iterator/problem1.png?id=52ef2fe2d4920e3fed696c221fe757f2)
+![各种类型的集合](../imgs/iterator/problem1.png)
 
 各种类型的集合。
 
@@ -20,7 +20,7 @@
 
 如果你的集合基于列表， 那么这项工作听上去仿佛很简单。 但如何遍历复杂数据结构 （例如树） 中的元素呢？ 例如， 今天你需要使用深度优先算法来遍历树结构， 明天可能会需要广度优先算法； 下周则可能会需要其他方式 （比如随机存取树中的元素）。
 
-![各种遍历算法](https://refactoringguru.cn/images/patterns/diagrams/iterator/problem2.png?id=f9c1a746c787320291c85fdc2a314192)
+![各种遍历算法](../imgs/iterator/problem2.png)
 
 可通过不同的方式遍历相同的集合。
 
@@ -32,7 +32,7 @@
 
 迭代器模式的主要思想是将集合的遍历行为抽取为单独的*迭代器*对象。 
 
-![迭代器可以实现不同算法](https://refactoringguru.cn/images/patterns/diagrams/iterator/solution1.png?id=2f5fbcce6099d8ea09b2fbb83e3e7059)
+![迭代器可以实现不同算法](../imgs/iterator/solution1.png)
 
 迭代器可实现多种遍历算法。 多个迭代器对象可同时遍历同一个集合。
 
@@ -44,7 +44,7 @@
 
 ## 真实世界类比
 
-![漫步罗马的不同方式](https://refactoringguru.cn/images/patterns/content/iterator/iterator-comic-1-zh.png?id=a9afbec17373689723a802831347827a)
+![漫步罗马的不同方式](../imgs/iterator/iterator-comic-1-zh.png)
 
 漫步罗马的不同方式。
 
@@ -58,9 +58,9 @@
 
 ## 迭代器模式结构
 
-![迭代器设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/iterator/structure.png?id=35ea851f8f6bbe51d79eb91e6e6519d0)
+![迭代器设计模式的结构](../imgs/iterator/structure.png)
 
-![迭代器设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/iterator/structure-indexed.png?id=7bc28907ff6b480db6635a93ebaa10ff)
+![迭代器设计模式的结构](../imgs/iterator/structure-indexed.png)
 
 - 
 **迭代器**（Iterator） 接口声明了遍历集合所需的操作： 获取下一个元素、 获取当前位置和重新开始迭代等。
@@ -77,7 +77,7 @@
 
 在本例中， **迭代器**模式用于遍历一个封装了访问微信好友关系功能的特殊集合。 该集合提供使用不同方式遍历档案资料的多个迭代器。 
 
-![迭代器模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/iterator/example-zh.png?id=a87c16037f86aa8a0f91155f12ca7a75)
+![迭代器模式示例的结构](../imgs/iterator/example-zh.png)
 
 遍历社交档案的示例
 

@@ -4,19 +4,19 @@
 
 **中介者模式**是一种行为设计模式， 能让你减少对象之间混乱无序的依赖关系。 该模式会限制对象之间的直接交互， 迫使它们通过一个中介者对象进行合作。 
 
-![中介者设计模式](https://refactoringguru.cn/images/patterns/content/mediator/mediator.png?id=0264bd857a231b6ea2d0c537c092e698)
+![中介者设计模式](../imgs/mediator/mediator.png)
 
 ## 问题
 
 假如你有一个创建和修改客户资料的对话框， 它由各种控件组成， 例如文本框 （TextField）、 复选框 （Checkbox） 和按钮 （Button） 等。
 
-![用户界面中各元素间的混乱关系](https://refactoringguru.cn/images/patterns/diagrams/mediator/problem1-zh.png?id=049cc273d233d1cbed672f7d69c2e696)
+![用户界面中各元素间的混乱关系](../imgs/mediator/problem1-zh.png)
 
 用户界面中各元素间的关系会随程序发展而变得混乱。
 
 某些表单元素可能会直接进行互动。 例如， 选中 “我有一只狗” 复选框后可能会显示一个隐藏文本框用于输入狗狗的名字。 另一个例子是提交按钮必须在保存数据前校验所有输入内容。
 
-![UI 中各元素相互依赖](https://refactoringguru.cn/images/patterns/diagrams/mediator/problem2.png?id=072c51eee4dd90c0972866440c87c1c3)
+![UI 中各元素相互依赖](../imgs/mediator/problem2.png)
 
 元素间存在许多关联。 因此， 对某些元素进行修改可能会影响其他元素。
 
@@ -28,7 +28,7 @@
 
 在资料编辑表单的例子中， 对话框 （Dialog） 类本身将作为中介者， 其很可能已知自己所有的子元素， 因此你甚至无需在该类中引入新的依赖关系。
 
-![UI 元素必须通过中介者进行沟通。](https://refactoringguru.cn/images/patterns/diagrams/mediator/solution1-zh.png?id=3c9f17ea90ddb9bf2a9d3fb280993cf2)
+![UI 元素必须通过中介者进行沟通。](../imgs/mediator/solution1-zh.png)
 
 UI 元素必须通过中介者对象进行间接沟通。
 
@@ -40,7 +40,7 @@ UI 元素必须通过中介者对象进行间接沟通。
 
 ## 真实世界类比
 
-![空中交通管制塔台](https://refactoringguru.cn/images/patterns/diagrams/mediator/live-example.png?id=aa1de3cb7b63aa623e63578a1e43399a)
+![空中交通管制塔台](../imgs/mediator/live-example.png)
 
 飞行器驾驶员之间不会通过相互沟通来决定下一架降落的飞机。 所有沟通都通过控制塔台进行。
 
@@ -50,9 +50,9 @@ UI 元素必须通过中介者对象进行间接沟通。
 
 ## 中介者模式结构
 
-![中介者设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/mediator/structure.png?id=1f2accc7820ecfe9665b6d30cbc0bc61)
+![中介者设计模式的结构](../imgs/mediator/structure.png)
 
-![中介者设计模式的结构](https://refactoringguru.cn/images/patterns/diagrams/mediator/structure-indexed.png?id=a82d4cf1b92a4f72af32f231ffd21131)
+![中介者设计模式的结构](../imgs/mediator/structure-indexed.png)
 
 - 
 **组件**（Component） 是各种包含业务逻辑的类。 每个组件都有一个指向中介者的引用， 该引用被声明为中介者接口类型。 组件不知道中介者实际所属的类， 因此你可通过将其连接到不同的中介者以使其能在其他程序中复用。
@@ -67,7 +67,7 @@ UI 元素必须通过中介者对象进行间接沟通。
 
 在本例中， **中介者**模式可帮助你减少各种 UI 类 （按钮、 复选框和文本标签） 之间的相互依赖关系。 
 
-![中介者模式示例的结构](https://refactoringguru.cn/images/patterns/diagrams/mediator/example.png?id=3151c153533e816e226be0ef977211e8)
+![中介者模式示例的结构](../imgs/mediator/example.png)
 
 UI 对话框类的结构
 
