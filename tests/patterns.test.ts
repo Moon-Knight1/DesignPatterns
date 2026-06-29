@@ -9,12 +9,17 @@ import {
 } from '@/data/patterns'
 
 describe('patterns manifest', () => {
-  it('contains exactly 22 patterns', () => {
-    expect(patterns.length).toBe(22)
+  it('contains exactly 23 patterns', () => {
+    expect(patterns.length).toBe(23)
   })
 
-  it('excludes interpreter', () => {
-    expect(patterns.find((p) => p.slug === 'interpreter')).toBeUndefined()
+  it('includes interpreter at order 4 in behavioral category', () => {
+    const interp = patterns.find((p) => p.slug === 'interpreter')
+    expect(interp).toBeDefined()
+    expect(interp?.category).toBe('behavioral')
+    expect(interp?.order).toBe(4)
+    expect(interp?.titleZh).toBe('解释器模式')
+    expect(interp?.titleEn).toBe('Interpreter')
   })
 
   it('has unique slugs', () => {
@@ -22,10 +27,10 @@ describe('patterns manifest', () => {
     expect(new Set(slugs).size).toBe(slugs.length)
   })
 
-  it('distributes 5/7/10 across categories', () => {
+  it('distributes 5/7/11 across categories', () => {
     expect(categories.creational.items.length).toBe(5)
     expect(categories.structural.items.length).toBe(7)
-    expect(categories.behavioral.items.length).toBe(10)
+    expect(categories.behavioral.items.length).toBe(11)
   })
 
   it('orders items within each category', () => {
@@ -50,11 +55,24 @@ describe('patterns manifest', () => {
     expect(getNext('proxy')?.slug).toBe('chain-of-responsibility')  // last structural → first behavioral
   })
 
+  it('chains interpreter between iterator and mediator', () => {
+    // Behavioral chain around the new pattern
+    expect(getNext('iterator')?.slug).toBe('interpreter')          // before interpreter
+    expect(getNext('interpreter')?.slug).toBe('mediator')          // after interpreter
+    expect(getPrev('mediator')?.slug).toBe('interpreter')          // reverse direction
+  })
+
+  it('getPattern returns the interpreter pattern', () => {
+    const p = getPattern('interpreter')
+    expect(p?.slug).toBe('interpreter')
+    expect(p?.titleEn).toBe('Interpreter')
+  })
+
   it('getPattern returns undefined for unknown slug', () => {
     expect(getPattern('not-a-pattern')).toBeUndefined()
   })
 
-  it('TOTAL_PATTERNS equals 22', () => {
-    expect(TOTAL_PATTERNS).toBe(22)
+  it('TOTAL_PATTERNS equals 23', () => {
+    expect(TOTAL_PATTERNS).toBe(23)
   })
 })
