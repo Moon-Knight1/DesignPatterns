@@ -17,17 +17,18 @@ export const patterns: Pattern[] = [
   { slug: 'flyweight',         titleZh: '享元模式',         titleEn: 'Flyweight',          category: 'structural', summary: '通过共享技术有效支持大量细粒度对象的复用。',             order: 6 },
   { slug: 'proxy',             titleZh: '代理模式',         titleEn: 'Proxy',              category: 'structural', summary: '为其他对象提供一种代理以控制对这个对象的访问。',         order: 7 },
 
-  // 行为型 (Behavioral) — 10 patterns
+  // 行为型 (Behavioral) — 11 patterns
   { slug: 'chain-of-responsibility', titleZh: '责任链模式', titleEn: 'Chain of Responsibility', category: 'behavioral', summary: '将请求沿处理链传递，直到有对象处理它为止。',         order: 1 },
   { slug: 'command',           titleZh: '命令模式',         titleEn: 'Command',            category: 'behavioral', summary: '将请求封装为对象，从而支持可撤销、可排队的操作。',       order: 2 },
   { slug: 'iterator',          titleZh: '迭代器模式',       titleEn: 'Iterator',           category: 'behavioral', summary: '提供一种方法顺序访问聚合对象中的元素，而不暴露其内部表示。', order: 3 },
-  { slug: 'mediator',          titleZh: '中介者模式',       titleEn: 'Mediator',           category: 'behavioral', summary: '用一个中介对象封装一系列对象之间的交互。',               order: 4 },
-  { slug: 'memento',           titleZh: '备忘录模式',       titleEn: 'Memento',            category: 'behavioral', summary: '在不破坏封装的前提下捕获对象的内部状态并保存。',         order: 5 },
-  { slug: 'observer',          titleZh: '观察者模式',       titleEn: 'Observer',           category: 'behavioral', summary: '定义对象间一对多的依赖关系，状态变化时通知所有依赖者。', order: 6 },
-  { slug: 'state',             titleZh: '状态模式',         titleEn: 'State',              category: 'behavioral', summary: '允许对象在其内部状态改变时改变其行为。',                 order: 7 },
-  { slug: 'strategy',          titleZh: '策略模式',         titleEn: 'Strategy',           category: 'behavioral', summary: '定义一系列算法，将每个算法封装起来并使它们可互换。',     order: 8 },
-  { slug: 'template-method',   titleZh: '模板方法模式',     titleEn: 'Template Method',    category: 'behavioral', summary: '在父类中定义算法骨架，将某些步骤延迟到子类实现。',       order: 9 },
-  { slug: 'visitor',           titleZh: '访问者模式',       titleEn: 'Visitor',            category: 'behavioral', summary: '在不修改元素类的前提下为对象结构增加新操作。',           order: 10 },
+  { slug: 'interpreter',       titleZh: '解释器模式',       titleEn: 'Interpreter',        category: 'behavioral', summary: '给定一种语言，定义它的文法表示，并提供一个解释器来解释语言中的句子。', order: 4 },
+  { slug: 'mediator',          titleZh: '中介者模式',       titleEn: 'Mediator',           category: 'behavioral', summary: '用一个中介对象封装一系列对象之间的交互。',               order: 5 },
+  { slug: 'memento',           titleZh: '备忘录模式',       titleEn: 'Memento',            category: 'behavioral', summary: '在不破坏封装的前提下捕获对象的内部状态并保存。',         order: 6 },
+  { slug: 'observer',          titleZh: '观察者模式',       titleEn: 'Observer',           category: 'behavioral', summary: '定义对象间一对多的依赖关系，状态变化时通知所有依赖者。', order: 7 },
+  { slug: 'state',             titleZh: '状态模式',         titleEn: 'State',              category: 'behavioral', summary: '允许对象在其内部状态改变时改变其行为。',                 order: 8 },
+  { slug: 'strategy',          titleZh: '策略模式',         titleEn: 'Strategy',           category: 'behavioral', summary: '定义一系列算法，将每个算法封装起来并使它们可互换。',     order: 9 },
+  { slug: 'template-method',   titleZh: '模板方法模式',     titleEn: 'Template Method',    category: 'behavioral', summary: '在父类中定义算法骨架，将某些步骤延迟到子类实现。',       order: 10 },
+  { slug: 'visitor',           titleZh: '访问者模式',       titleEn: 'Visitor',            category: 'behavioral', summary: '在不修改元素类的前提下为对象结构增加新操作。',           order: 11 },
 ]
 
 export interface CategoryMeta {
@@ -58,7 +59,7 @@ export const categories: Record<PatternCategory, CategoryMeta> = {
   },
 }
 
-// Linear chain across all 22 in category-then-order sequence (Creational 1→5, Structural 1→7, Behavioral 1→10)
+// Linear chain across all 23 in category-then-order sequence (Creational 1→5, Structural 1→7, Behavioral 1→11)
 const chain: Pattern[] = [
   ...categories.creational.items,
   ...categories.structural.items,
