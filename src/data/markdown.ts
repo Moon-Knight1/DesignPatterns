@@ -18,9 +18,6 @@ const allEntries: SlugPath[] = Object.entries(raw).map(([path, source]) => {
   return { path, slug: match[1], source }
 })
 
-// Filter out the empty interpreter.md so the catalog shows 22 patterns.
 export const markdownBySlug: Record<string, string> = Object.fromEntries(
-  allEntries
-    .filter(({ slug }) => slug !== 'interpreter')
-    .map(({ slug, source }) => [slug, source])
+  allEntries.map(({ slug, source }) => [slug, source])
 )
