@@ -9,6 +9,7 @@
 - 项目当前注册 **22 个 GoF 模式**，缺少 **解释器模式**（Interpreter）。
 - `theory/interpreter.md` 文件已存在，但内容为乱码（疑似早期 Abstract Factory 文件编码错误），路由 `/pattern/interpreter` 当前会因为找不到内容而 404。
 - `imgs/` 下没有 `interpreter/` 目录。
+- **`src/data/markdown.ts` 中有一段硬编码过滤（`.filter(({ slug }) => slug !== 'interpreter')`）**，明确把 `interpreter` slug 排除在外，注释写的是 "Filter out the empty interpreter.md so the catalog shows 22 patterns"。这是设计模式被排除的**真正原因**——即使补全了 `theory/interpreter.md` 与 `patterns.ts`，不解除这个过滤，详情页仍然会因为 `markdownBySlug['interpreter'] === undefined` 而 404。
 - 参考资料：<https://www.seven97.top/system-design/design-pattern/interpreter.html>（七七大、Java 加减法解释器示例）。
 
 ## 2. 设计目标
@@ -49,6 +50,15 @@
 
 md 引用约定：`![…](../imgs/interpreter/<file>.png)`，由 `useMarkdown.ts` 的 BASE_URL 重写逻辑处理（开发与生产环境均适用）。
 
+**视觉包装（黏土风格适配）**：博客原图是普通截图，直接插入会破坏本站 Claymorphism 视觉统一。下载图片后，需在 `src/styles/prose.css`（或新建 `interpreter-images` 作用域）中为 `prose img[src*="imgs/interpreter/"]` 添加以下视觉包装：
+
+- `border-radius: var(--radius-card)`（与卡片一致）
+- `background: #fff`（白底托底，去掉原图透明背景）
+- `box-shadow: var(--shadow-clay-out)`（黏土外阴影）
+- `padding: 12px`（白底与图之间留呼吸空间）
+
+效果：原图被"压"进一个黏土质感的白底圆角卡片，与其他模式示意图风格一致。该 CSS 选择器只匹配 interpreter 目录下的图片，不影响其他 22 个模式。
+
 ## 4. 元数据注册
 
 在 `src/data/patterns.ts` 的行为型分组里，于 iterator 之后、mediator 之前插入：
@@ -63,18 +73,22 @@ md 引用约定：`![…](../imgs/interpreter/<file>.png)`，由 `useMarkdown.ts
 
 ## 5. 影响的文件清单
 
-- **修改** `src/data/patterns.ts`（新增 1 个条目，6 个 order 字段 +1）
+- **修改** `src/data/patterns.ts`（新增 1 个条目，7 个 order 字段 +1）
+- **修改** `src/data/markdown.ts`（**关键**：移除 `.filter(({ slug }) => slug !== 'interpreter')` 硬编码过滤；删除对应的"Filter out the empty interpreter.md"注释。改为 `Object.fromEntries(allEntries.map(...))`，让所有 slug 自然注册）
 - **覆盖** `theory/interpreter.md`（替换乱码，重写为统一格式）
 - **新增** `imgs/interpreter/structure-zh.png`、`imgs/interpreter/ast-zh.png`、`imgs/interpreter/example-zh.png`（共 3 张图片）
+- **修改** `src/styles/prose.css`（新增 interpreter 图片的黏土风格 CSS 包装：圆角 + 白底 + `--shadow-clay-out`，仅作用于 `prose img[src*="imgs/interpreter/"]`，不影响其他 22 个模式）
 - **无需改动** `useMarkdown.ts`（图片路径规则 `../imgs/<slug>/...` 已支持）、`router/index.ts`（hash 路由 + slug 解析自动适配）、`MarkdownRenderer.vue`（通用）
 
 ## 6. 验证方式
 
 - `npm run build` 通过，无类型错误
 - `npm run test` 全部通过（特别是 `useMarkdown.test.ts` 验证图片路径 BASE_URL 重写逻辑）
+- **关键回归检查**：`grep -r "slug !== 'interpreter'" src/` 应无匹配（确认 `markdown.ts` 中的硬编码过滤已被移除）；`markdownBySlug['interpreter']` 在构建产物中存在且非空
 - 手动访问 `https://moon-knight1.github.io/DesignPatterns/#/pattern/interpreter` 与 `/#/pattern/interpreter`（本地 dev）能正常渲染出结构图、AST、代码示例，无 404
 - 首页行为型分类下能看到 11 张卡片，顺序为：责任链、命令、迭代器、**解释器**、中介者、备忘录、观察者、状态、策略、模板方法、访问者
 - 详情页底部"上一篇/下一篇"链指向：迭代器（←）与中介者（→）
+- interpreter 图片（3 张）渲染为带圆角、白底、`--shadow-clay-out` 阴影的黏土风格卡片，与其他模式视觉一致
 
 ## 7. 范围外 (Out of Scope)
 
