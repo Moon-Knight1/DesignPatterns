@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import { useMarkdown } from '@/composables/useMarkdown'
 
 const props = defineProps<{ source: string }>()
-const html = useMarkdown(props.source)
+// toRef so useMarkdown sees a reactive ref — without it, the
+// composable's `isRef(source)` branch returns false and the string
+// value is captured statically at setup, freezing the rendered HTML
+// when the route changes (e.g. clicking 上一篇/下一篇).
+const html = useMarkdown(toRef(props, 'source'))
 
 // Wrap every <img> with a preceding skeleton span and add lazy loading.
 const wrappedHtml = computed(() =>

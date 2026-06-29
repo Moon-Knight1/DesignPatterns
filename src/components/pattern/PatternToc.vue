@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { toRef } from 'vue'
 import { useToc } from '@/composables/useToc'
 
 const props = defineProps<{ html: string }>()
-const entries = useToc(props.html)
+// toRef so useToc sees a reactive ref — same fix as MarkdownRenderer;
+// without it, the TOC would freeze on the first article's headings
+// when the route changes.
+const entries = useToc(toRef(props, 'html'))
 
 function scrollTo(id: string, e: MouseEvent) {
   e.preventDefault()

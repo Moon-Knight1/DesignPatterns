@@ -1,4 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#FB923C"/>
-  <text x="16" y="22" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="700" fill="#FFF7F0">23</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="23 种 GoF 设计模式">
+  <defs>
+    <!-- Soft drop shadow: the single thing that turns flat blocks into clay objects. -->
+    <filter id="clay" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.5"/>
+      <feOffset dx="0.3" dy="0.6" result="offsetBlur"/>
+      <feFlood flood-color="#1F2937" flood-opacity="0.3" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="coloredShadow"/>
+      <feMerge>
+        <feMergeNode in="coloredShadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Cream clay canvas, matches site background token -->
+  <rect width="32" height="32" rx="8" fill="#FFF7F0"/>
+
+  <!-- Top: mint clay puck (creational) -->
+  <rect x="11" y="2.5" width="10" height="10" rx="3" fill="#7DD3C0" filter="url(#clay)"/>
+  <path d="M14 2.5 h4 a3 3 0 0 1 3 3 v0.5 h-10 v-0.5 a3 3 0 0 1 3 -3 z" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- Bottom-left: purple clay puck (structural) -->
+  <rect x="2.5" y="17" width="10" height="10" rx="3" fill="#A78BFA" filter="url(#clay)"/>
+  <path d="M5.5 17 h4 a3 3 0 0 1 3 3 v0.5 h-10 v-0.5 a3 3 0 0 1 3 -3 z" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- Bottom-right: orange clay puck (behavioral) -->
+  <rect x="19.5" y="17" width="10" height="10" rx="3" fill="#FB923C" filter="url(#clay)"/>
+  <path d="M22.5 17 h4 a3 3 0 0 1 3 3 v0.5 h-10 v-0.5 a3 3 0 0 1 3 -3 z" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- Central coral knot: the pattern idea tying the three categories together -->
+  <circle cx="16" cy="16" r="3" fill="#F97316" filter="url(#clay)"/>
+  <ellipse cx="15.2" cy="15.1" rx="1.1" ry="0.7" fill="#FFFFFF" opacity="0.6"/>
 </svg>

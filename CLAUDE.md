@@ -2,48 +2,118 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 仓库定位
+## 项目概览
 
-这是一个**设计模式中文知识库**，主体内容是 GoF 23 种设计模式的 Markdown 理论文档（`theory/<pattern>.md`）以及对应的插图（`imgs/<pattern>/*.png`）。仓库**没有应用代码、构建系统或测试套件**——修改通常发生在 Markdown 文档和图片资源上。
+一个面向中文读者的 GoF 设计模式交互式学习手册。Vue 3 + Vite + TypeScript 单页应用，部署在 GitHub Pages：`https://moon-knight1.github.io/DesignPatterns/`。
 
-`theory/interpreter.md` 当前为空文件（0 字节），不要凭空虚构内容；若需要补齐，先与用户确认范围。
+## 技术栈
 
-## 目录结构
+- **构建**：Vite + `@vitejs/plugin-vue`，TypeScript，`vue-tsc`
+- **框架**：Vue 3 + `vue-router` 4（**hash 模式**，见下方架构说明）
+- **内容渲染**：`markdown-it` + `markdown-it-anchor` + `github-slugger`
+- **图标**：`lucide-vue-next`；`@vueuse/head` 处理 SEO
+- **测试**：Vitest + `@vue/test-utils` + `jsdom`
+- **静态资源**：`vite-plugin-static-copy` 把 `imgs/**/*` 复制到产物根
 
-- `theory/` — 23 个设计模式文档，按模式名命名（如 `singleton.md`、`observer.md`）。每个文件包含：意图、问题、解决方案、真实世界类比、结构图、伪代码等小节，引用同名的 `imgs/<pattern>/` 下的 PNG。
-- `imgs/<pattern>/` — 各模式的插图（UML 结构图、带编号的结构图、漫画示意图等）。
-- `download_images.py` — 唯一可执行脚本，负责把 Markdown 中远程图片链接下载到本地 `imgs/<pattern>/`，并可改写 Markdown 中的链接为相对路径（详见下文）。
-- `.vscode/settings.json` — 将 Python 环境与包管理器固定为 `conda`（Anaconda）。
-- `.gitignore` — 显式忽略 `download_images.py` 自身、`__pycache__/` 等本地产物。
-
-## 图片资源维护流程（`download_images.py`）
-
-脚本读取的是 `output/` 目录，而本仓库的 Markdown 实际位于 `theory/`。**直接调用脚本而不指定 `--output-dir` 会失败**，常见用法：
-
-```bash
-# 用 Anaconda 的解释器（见下文 Python 解释器约束）
-D:/Developer/Anaconda3/python.exe download_images.py --output-dir theory --dry-run          # 仅打印待下载项
-D:/Developer/Anaconda3/python.exe download_images.py --output-dir theory                    # 实际下载
-D:/Developer/Anaconda3/python.exe download_images.py --output-dir theory --rewrite-md        # 仅把远程链接改写为相对路径后退出
-```
-
-- `--rewrite-md` 是**幂等破坏性**操作：会把 `![alt](https://...)` 替换为 `![alt](../imgs/<pattern>/<file>)` 并写回原文件；非远程 URL（已是相对路径或 `data:`）保持不变。批量重写前建议先 `--dry-run` 复核。
-- 下载默认 8 个并发线程，开启 `--no-skip-existing` 会覆盖已有图片。
-- 依赖 `requests`（Anaconda 默认环境已包含；Pyright 静态环境未装，已在脚本里加 `type: ignore` 抑制告警）。
-
-## Python 解释器
-
-本机 `python` 命令指向 Windows App Store 占位符，不会真正执行 Python。运行任何脚本（含 `download_images.py`）都必须使用 Anaconda 完整路径：
+## 目录结构与职责
 
 ```
-D:\Developer\Anaconda3\python.exe
-D:\Developer\Anaconda3\Scripts\pip.exe
+src/
+  main.ts                      # 应用入口：挂载 head 插件、router、加载 4 个 CSS
+  App.vue                      # 顶层外壳：skip-link + <RouterView>
+  router/index.ts              # hash 模式路由：/, /pattern/:slug, /about
+  data/
+    patterns.ts                # 22 个模式的元数据（slug/中英文标题/分类/摘要/order）
+                              # 以及分类聚合、getPattern/getPrev/getNext 工具
+    markdown.ts                # 构建期 import.meta.glob('../../theory/*.md', { eager: true, query: '?raw' })
+                              # 把 theory/*.md 编译为 markdownBySlug Record
+  composables/
+    useMarkdown.ts             # markdown-it 实例化 + 预处理（路径重写、清理空列表项）
+    useToc.ts                  # DOMParser 解析 h2/h3，构建 TOC
+  views/                       # HomeView / PatternView / AboutView
+  components/
+    layout/                    # Container / SiteHeader / SiteFooter
+    home/                      # HeroSection / CategorySection / PatternCard / PatternCatalog
+    pattern/                   # PatternHeader / MarkdownRenderer / PatternToc / PatternFooterNav
+    ui/                        # CategoryChip / ClayButton / ClayCard
+  styles/
+    tokens.css                 # 设计 tokens（CSS 变量）
+    reset.css / global.css / prose.css
+  types/pattern.ts             # Pattern / PatternCategory 类型
+tests/                         # Vitest 单元测试
+theory/                        # 22 个模式的 Markdown 原文
+imgs/<pattern-slug>/           # 模式示意图
+public/                        # 静态资源（favicon 等）
+.github/workflows/deploy.yml   # 推 main → build → deploy GitHub Pages
 ```
 
-在 Skill、shell 命令、子进程中需要调用 Python 时，统一用绝对路径替代 `python` / `pip`。
+路径别名：`@` → `src/`（同时在 `tsconfig.app.json` 与 `vite.config.ts` 声明）。
 
-## 编辑 Markdown 时的注意事项
+## 架构要点
 
-- 图片引用使用相对路径 `../imgs/<pattern>/<file>.png`，新增图片时务必把文件放到对应子目录，**不要**在 Markdown 里写绝对路径或远程 URL（除非你打算随后用 `--rewrite-md` 处理）。
-- Markdown 文本为中文，遵循现有风格：每节用 `##` 二级标题，伪代码块用普通围栏代码块（无语言标签），列表项以 `- ` 开头；不要混用全角/半角标点之外的风格。
-- 修改后没有自动校验脚本——提交前至少通读 diff，确认图片链接未断裂、章节顺序未被打乱。
+### 内容管线
+
+- 模式元数据定义在 `src/data/patterns.ts`，是单一事实来源。
+- `src/data/markdown.ts` 在构建期用 `import.meta.glob` 将所有 Markdown 原文以字符串形式打包；运行时无需网络请求。
+- `useMarkdown`（`src/composables/useMarkdown.ts`）对每篇 Markdown 做字符串预处理：
+  1. 将 `](../imgs/` 替换为 `]({BASE_URL}imgs/`，使图片路径在开发与生产（base 不同）下均有效。
+  2. 清理作为段落分隔符的单独 `- `，避免被误判为 setext 标题导致 TOC 污染。
+- 然后交给 `markdown-it` 渲染。
+
+### 路由
+
+- 使用 `createWebHashHistory`（配合 GitHub Pages 静态托管）。
+- `scrollBehavior` 处理滚动位置保留、锚点平滑滚动。
+- 未知路径重定向到 `/`。
+
+### 详情页结构（`PatternView.vue`）
+
+- 布局：`<Container>` → `<PatternHeader>`（面包屑 + 分类 + 标题）→ `<div class="layout">`（CSS Grid：主内容区 + TOC 侧边栏，≥1024px 显示）→ `<MarkdownRenderer>` + `<PatternToc>` → `<PatternFooterNav>`（上一/下一篇）。
+
+### `MarkdownRenderer.vue` 的图片处理
+
+- 使用 `v-html` 渲染，因此用事件委托监听图片加载/错误（`load` 冒泡，`error` 需 capture）。
+- 渲染前为每张 `<img>` 注入 `<span class="image-skeleton">` 占位；加载成功移除 skeleton，失败则替换为 fallback 元素。
+- 自动添加 `loading="lazy"` 与 `decoding="async"`。
+- TOC 锚点点击：阻止默认跳转，改用 `scrollIntoView({ behavior: 'smooth' })` 并更新 URL hash（使用 `replaceState`）。
+
+### 部署与基础路径
+
+- `vite.config.ts`：`base` 在生产环境为 `/DesignPatterns/`，开发为 `/`。
+- `vite-plugin-static-copy` 将 `imgs/**/*` 复制到 `dist/imgs/`。
+- GitHub Actions：推 `main` 自动构建并部署 `dist/`。
+
+## 代码规范
+
+- TypeScript 严格模式 + `noUnusedLocals` + `noUnusedParameters` + `verbatimModuleSyntax`。`import type` 需显式标注。
+- 组件使用 `<script setup lang="ts">`，props 用 `defineProps<{…}>()`。
+- 路径统一 `@/...`，避免相对 `../../`。
+- 样式值一律从 `src/styles/tokens.css` 的 CSS 变量获取，禁止硬编码。
+- 分类（`creational` / `structural` / `behavioral`）对应的 CSS 变量与图标已在 `src/data/patterns.ts` 中定义。
+- 内联锚点点击统一使用 `MarkdownRenderer` 的 `onAnchorClick` 实现平滑滚动。
+- 避免引入非必要的第三方库（如 lodash、date-fns）。
+
+## 工作流约束
+
+### 改模式元数据 / 新增 / 移除模式
+
+- 修改 `src/data/patterns.ts` 和对应的 `theory/<slug>.md`，两者 slug 必须一致。
+- 新增时：创建 `theory/<slug>.md` → 在 `patterns.ts` 中注册（指定 `category` 与 `order`）。
+- 移除时：删除 `patterns.ts` 中的条目、删除 `theory/<slug>.md` 以及 `imgs/<slug>/` 目录。
+
+### 改 Markdown 渲染
+
+- 修改 `markdown-it` 全局配置只应在 `useMarkdown.ts` 中进行。
+- 图片路径只能使用 `../imgs/<slug>/<file>` 形式，如有新路径写法需在 `useMarkdown.test.ts` 中添加用例。
+
+### 改静态部署
+
+- 修改 `vite.config.ts` 的 `base` 或 `vite-plugin-static-copy` 目标时，确保 GitHub Pages 路径仍能正确解析。
+- 修改 CI 配置前请确认 GitHub Actions 官方推荐的最新 actions 版本。
+
+### 严禁操作
+
+- 不要删除 `theory/` 下的 `.md` 或 `imgs/<slug>/` 下的图片而不更新 `patterns.ts`（会导致 404）。
+- 不要修改路径别名而不同步 `vite.config.ts` 与 `tsconfig.app.json`。
+- 不要在 `theory/*.md` 中引入新的“段落分隔”语法（应保持现有的 `- ` 约定）。
+- 不要将 `import.meta.env.BASE_URL` 替换为硬编码 `/DesignPatterns/`，否则会破坏本地开发环境。
