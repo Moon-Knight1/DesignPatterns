@@ -6,6 +6,7 @@ if (typeof document !== 'undefined' && document.documentElement) {
     window.matchMedia = (query: string) => ({
       matches: false,
       media: query,
+      onchange: null,
       addListener: () => {},
       removeListener: () => {},
       addEventListener: () => {},
