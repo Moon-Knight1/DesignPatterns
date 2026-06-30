@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { ref, onUnmounted, type Ref, getCurrentInstance } from 'vue'
 
 /**
  * 监听系统 prefers-reduced-motion: reduce。
@@ -21,6 +21,13 @@ export function useReducedMotion(): Readonly<Ref<boolean>> {
   // 现代浏览器使用 addEventListener；旧 Safari 用 addListener 作 fallback（虽然不强求）
   if (typeof mql.addEventListener === 'function') {
     mql.addEventListener('change', handler)
+
+    // 仅在组件上下文中注册清理回调
+    if (getCurrentInstance() !== null) {
+      onUnmounted(() => {
+        mql.removeEventListener('change', handler)
+      })
+    }
   }
 
   return reduced

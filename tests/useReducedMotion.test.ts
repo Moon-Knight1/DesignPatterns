@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { nextTick } from 'vue'
+import { nextTick, defineComponent, h } from 'vue'
+import { mount } from '@vue/test-utils'
 
 describe('useReducedMotion', () => {
   let listeners: Array<(e: MediaQueryListEvent) => void> = []
@@ -51,5 +52,22 @@ describe('useReducedMotion', () => {
     const { useReducedMotion } = await import('@/composables/useReducedMotion')
     const rm = useReducedMotion()
     expect(rm.value).toBe(false)
+  })
+
+  it('removes change listener on component unmount', async () => {
+    const { useReducedMotion } = await import('@/composables/useReducedMotion')
+
+    const TestComponent = defineComponent({
+      setup() {
+        useReducedMotion()
+        return () => h('div')
+      },
+    })
+
+    const wrapper = mount(TestComponent)
+    expect(mql.addEventListener).toHaveBeenCalledWith('change', expect.any(Function))
+
+    await wrapper.unmount()
+    expect(mql.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function))
   })
 })
