@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { toRef } from 'vue'
+import { ref, toRef } from 'vue'
 import { useToc } from '@/composables/useToc'
+import { useStaggerReveal } from '@/composables/useStaggerReveal'
 
 const props = defineProps<{ html: string }>()
-// toRef so useToc sees a reactive ref — same fix as MarkdownRenderer;
-// without it, the TOC would freeze on the first article's headings
-// when the route changes.
 const entries = useToc(toRef(props, 'html'))
+
+const ulEl = ref<HTMLElement | null>(null)
+useStaggerReveal(ulEl, {
+  registryId: 'pattern-toc',
+  tokenKey: 'subhead',
+  staggerKey: 'staggerToc',
+})
 
 function scrollTo(id: string, e: MouseEvent) {
   e.preventDefault()
@@ -21,7 +26,7 @@ function scrollTo(id: string, e: MouseEvent) {
 <template>
   <aside class="toc" aria-label="本页目录">
     <p class="heading">本页目录</p>
-    <ul v-if="entries.length">
+    <ul v-if="entries.length" ref="ulEl">
       <li v-for="entry in entries" :key="entry.id" :data-level="entry.level">
         <a :href="`#${entry.id}`" @click="scrollTo(entry.id, $event)">{{ entry.text }}</a>
       </li>
