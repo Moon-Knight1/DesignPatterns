@@ -1,9 +1,40 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { gsap } from 'gsap'
 import ClayButton from '@/components/ui/ClayButton.vue'
+import { useGsapScene } from '@/composables/useGsapScene'
+import { useMotionTokens } from '@/composables/useMotionTokens'
+
+const heroEl = ref<HTMLElement | null>(null)
+const tokensRef = useMotionTokens()
+
+useGsapScene(heroEl, (tl, rm) => {
+  const tokens = tokensRef.value
+  if (rm.value) {
+    gsap.set(heroEl.value!, { opacity: 1, y: 0 })
+    return
+  }
+  const title = heroEl.value!.querySelector('.title')!
+  const cta = heroEl.value!.querySelector('.actions')!
+
+  tl.from(title, {
+    duration: tokens.heroTitle.duration,
+    ease: tokens.heroTitle.ease,
+    y: tokens.heroTitle.fromY,
+    opacity: tokens.heroTitle.fromOpacity,
+  })
+  tl.from(cta, {
+    duration: tokens.entryStrong.duration,
+    ease: tokens.entryStrong.ease,
+    y: tokens.entryStrong.fromY,
+    scale: tokens.entryStrong.fromScale,
+    opacity: tokens.entryStrong.fromOpacity,
+  }, '+=0.11')   // 110ms 间隔（hero stagger）
+})
 </script>
 
 <template>
-  <section class="hero">
+  <section ref="heroEl" class="hero">
     <div class="hero-inner">
       <h1 class="title">23 种 GoF 设计模式</h1>
       <div class="actions">
