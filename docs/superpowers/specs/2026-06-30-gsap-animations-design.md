@@ -95,25 +95,31 @@ export function useGsapScene(
 import { gsap } from 'gsap'
 import { useMotionTokens } from '@/composables/useMotionTokens'
 
-const { value: tokens } = useMotionTokens()
-const { leaveQuick, enterPage } = tokens
+// ⚠️ 只取 ref，不要在 setup 阶段解构 .value。
+// CSS 变量挂载完成 < 组件实例化 < onMounted 钩子 < gsap 回调，
+// 在 setup 里读取会拿到空字符串，parseMs / parsePx → NaN。
+const tokensRef = useMotionTokens()
 
 function onLeave(el: Element, done: () => void) {
   gsap.killTweensOf(el)                                       // 兜底杀掉该节点上残留 tween
+  // ↓ 这个 .value 在 GSAP 回调里访问——已晚于 tokens.css 注入，
+  //   computed lazy 评估 getComputedStyle，结果是结构化对象
+  const { toY, toOpacity, duration, ease } = tokensRef.value.leaveQuick
   gsap.to(el as gsap.TweenTarget, {
-    y: leaveQuick.toY,                                       // gsap.to 用 toY：-10（离场终点）
-    opacity: leaveQuick.toOpacity,                           // 0
-    duration: leaveQuick.duration,
-    ease: leaveQuick.ease,
+    y: toY,
+    opacity: toOpacity,
+    duration,
+    ease,
     onComplete: done,
   })
 }
 
 function onEnter(el: Element, done: () => void) {
   gsap.killTweensOf(el)
+  const { fromY, fromOpacity, fromScale, toY, toOpacity, toScale, duration, ease } = tokensRef.value.enterPage
   gsap.fromTo(el as gsap.TweenTarget,
-    { y: enterPage.fromY, opacity: enterPage.fromOpacity, scale: enterPage.fromScale },
-    { y: 0, opacity: 1, scale: 1, duration: enterPage.duration, ease: enterPage.ease, onComplete: done },
+    { y: fromY, opacity: fromOpacity, scale: fromScale },
+    { y: toY, opacity: toOpacity, scale: toScale, duration, ease, onComplete: done },
   )
 }
 </script>
@@ -121,6 +127,7 @@ function onEnter(el: Element, done: () => void) {
 
 > 注：`scale: 0.96 → 1` 提供肉眼可感的"页面入场"层级；`scale: 0.985` 在 340ms 内体感等同纯 fade，弃用。
 > **字段名约定**：`MotionToken` 暴露 `fromY/toY/fromScale/toScale/fromOpacity/toOpacity`——`gsap.from` / `fromTo.from` 用 `from*`；`gsap.to` / `fromTo.to` 用 `to*`。完整结构见 §4.4。
+> **读取时机约定**：`tokensRef.value` 只能在 mount 后的回调里读——这是 ref 的 lazy 特性 + CSS 注入时序的双重保证。
 
 **route 钩子的清理**：本钩子位于 `App.vue`，不归任何 `useGsapScene` 的 `ctx.revert()` 管辖。需要做两件事之一：
 - **A 推荐**：在 `onLeave` / `onEnter` 开头各加 `gsap.killTweensOf(el)`，扼杀可能挂在该节点上的旧 tween（同一 `key` 切换场景下尤其有用）。
@@ -215,28 +222,47 @@ function onEnter(el: Element, done: () => void) {
 --motion-reveal-scroll-from-opacity: 0;
 --motion-reveal-scroll-ease: back.out(1.4);
 
-/* ── leave-quick（gsap.to）路由退场 ── */
+/* ── leave-quick（gsap.to）路由退场 ──
+   from* 字段照旧填充以满足 MotionToken fromY 必填契约，
+   实施 read 时只读 to*。*/
 --motion-leave-quick-duration: 200ms;
+--motion-leave-quick-from-y: 0;
+--motion-leave-quick-from-scale: 1;
+--motion-leave-quick-from-opacity: 1;
 --motion-leave-quick-to-y: -10px;
 --motion-leave-quick-to-opacity: 0;
 --motion-leave-quick-ease: power2.in;
 
-/* ── enter-page（gsap.fromTo）路由登场 ── */
+/* ── enter-page（gsap.fromTo）路由登场：from 隐藏态 + to 自然静止 ── */
 --motion-enter-page-duration: 340ms;
 --motion-enter-page-from-y: 14px;
 --motion-enter-page-from-scale: 0.96;
 --motion-enter-page-from-opacity: 0;
+--motion-enter-page-to-y: 0;
+--motion-enter-page-to-scale: 1;
+--motion-enter-page-to-opacity: 1;
 --motion-enter-page-ease: back.out(1.1);
 
-/* ── hover-lift（gsap.to）卡悬停 ── */
+/* ── hover-lift（双向态：lift = to，rest = from） ──
+   fromY/fromScale 给 @pointerleave 用，toY/toScale 给 @pointerenter 用。*/
 --motion-hover-lift-duration: 300ms;
+--motion-hover-lift-from-y: 0;
+--motion-hover-lift-from-scale: 1;
+--motion-hover-lift-from-opacity: 1;
 --motion-hover-lift-to-y: -4px;
 --motion-hover-lift-to-scale: 1.02;
+--motion-hover-lift-to-opacity: 1;
 --motion-hover-lift-ease: back.out(1.2);
 
-/* ── press-squish（gsap.fromTo）卡/按钮按下 ── */
+/* ── press-squish（双向态：pressed = from，released = to） ──
+   fromScale = 0.94（按下凹态），toScale = 1（弹起静止）。*/
 --motion-press-squish-duration: 200ms;
+--motion-press-squish-from-y: 0;
 --motion-press-squish-from-scale: 0.94;
+--motion-press-squish-from-opacity: 1;
+--motion-press-squish-to-y: 0;
+--motion-press-squish-to-scale: 1;
+--motion-press-squish-to-opacity: 1;
 --motion-press-squish-ease: power3.out;
 
 /* ── stagger 步距 ── */
@@ -299,10 +325,25 @@ export function useMotionTokens(): Readonly<Ref<MotionTokensMap>>
 
 #### 4.4.3 解析实现要点
 
-- `parseMs(str)`：`'480ms'` / `'0.5s'` → number 秒
-- `parsePx(str)`：`'20px'` / `'14'` → number
-- `parseNum(str)`：`'0.92'` → number
-- 每个 `useMotionTokens()` 调用在 mount 时一次性 `getComputedStyle(document.documentElement)` 读全部变量并 cache
+- `parseMs(str)`：`'480ms'` / `'0.5s'` → number 秒。**输入空字符串返回 `NaN`**；parser 入口必须先 `str.trim().length > 0` 校验，否者 throw（见"NaN 防御"）。
+- `parsePx(str)`：`'20px'` / `'14'` → number，同上空串校验
+- `parseNum(str)`：`'0.92'` → number，同上
+
+**读取时机（防止 NaN）**：
+
+`useMotionTokens()` 返回的 `ComputedRef` 是**懒评估**的——只有访问 `.value` 时才会触发 `getComputedStyle`。
+
+CSS 注入时序：
+1. `main.ts` 里 `import './styles/tokens.css'` 被 Vite hoist，CSS `<style>` 标签注入 `<head>` 先于 JS 执行
+2. `createApp(App).mount('#app')` 调用，组件开始实例化
+3. **组件的 `setup()` 阶段**——Vite 注入虽已完成，但 CSS 变量应用样式是 mount 之后的下一个 paint 周期的事；此时 `getComputedStyle` 应能读到，但若在 setup 同步代码里访问仍有时序风险
+4. **onMounted 钩子 / GSAP 回调**——安全：`getComputedStyle(document.documentElement)` 此时拿到的 `--motion-foo` 是结构化字符串
+
+**因此调用方必须遵守**：在 `setup()` 里**只接 ref，不解构 `.value`**；`.value` 只在 `onMounted` / GSAP 回调里读——这与 §3.4 模板里 `const tokensRef = useMotionTokens()` 不解构的写法对齐。
+
+**NaN 防御**：parseMotion 入口检查 `cssVar === ''` → throw `[anim] token not defined: --motion-xxx; tokens.css 缺失该变量`，单测断言此抛错；不允许 `parseMs('')` 返回 NaN 静默流到 GSAP 触发 `tween.invalidate()` 把一切清掉。
+
+- 每个 `useMotionTokens().value` 访问一次性 `getComputedStyle(document.documentElement)` 读全部变量并 cache 在 computed ref 内部
 - 缺变量：`throw new Error('[anim] token not defined: ' + name)`，避免静默 undefined 浮到动画里出现 NaN
 
 #### 4.4.4 调用约定
@@ -336,7 +377,9 @@ gsap.fromTo(el,
   { y: tokens.enterPage.fromY,
     scale: tokens.enterPage.fromScale,
     opacity: tokens.enterPage.fromOpacity },
-  { y: 0, scale: 1, opacity: 1,
+  { y: tokens.enterPage.toY,
+    scale: tokens.enterPage.toScale,
+    opacity: tokens.enterPage.toOpacity,
     duration: tokens.enterPage.duration,
     ease: tokens.enterPage.ease },
 )
@@ -393,7 +436,7 @@ tests/
 | `src/components/home/PatternCard.vue` 或 `ClayCard.vue` | hover/click GSAP 接管（移除 CSS transform transition），用 `hover-lift` / `press-squish` token |
 | `src/components/pattern/PatternHeader.vue` | 进入视口时入场动画，引用 `fade-only` token |
 | `src/components/pattern/MarkdownRenderer.vue` | 内容更新后 `ScrollTrigger.refresh()`；h2/h3/img/pre 入视口浮现，引用 `reveal-scroll` token |
-| `src/components/pattern/PatternToc.vue` | TOC 项淡入**仅首次 mount 触发**（首次 mount 策略见 §6.6）；路由切换的整页 fade 已包含 TOC 区 |
+| `src/components/pattern/PatternToc.vue` | TOC 项淡入**仅首次 mount 触发**（首次 mount 策略见 §6.6）；路由切换的整页 fade 已包含 TOC 区；同时**移除现有 CSS transition（如果存在）**，避免 GSAP 与 CSS `transition: opacity/transform` 抢同一帧造成抖动（呼应 §4.3） |
 | `src/views/HomeView.vue` | 编排"先 Hero 后 Catalog"两段时间线 |
 | `src/views/PatternView.vue` | 编排"Header → Markdown → TOC"三段时间线 |
 
@@ -448,34 +491,27 @@ t=200   TOC 容器              应用 fade-only-tight
 import { gsap } from 'gsap'
 import { useMotionTokens } from '@/composables/useMotionTokens'
 
-const { value: tokens } = useMotionTokens()
+// ⚠️ setup 顶层只接 ref，不解构 .value（详见 §4.4.3 读取时机）
+const tokensRef = useMotionTokens()
 
-// @pointerenter —— 拾起 lift
+// @pointerenter —— 应用 toY/toScale（lift 终态）
 function onEnter(el: gsap.TweenTarget) {
-  gsap.to(el, {
-    duration: tokens.hoverLift.duration,
-    ease: tokens.hoverLift.ease,
-    y: tokens.hoverLift.toY,
-    scale: tokens.hoverLift.toScale,
-  })
+  const { duration, ease, toY, toScale } = tokensRef.value.hoverLift
+  gsap.to(el, { duration, ease, y: toY, scale: toScale })
 }
 
-// @pointerleave —— 回静止
+// @pointerleave —— 应用 fromY/fromScale（rest 终态由 token 提供，不再裸数字）
 function onLeave(el: gsap.TweenTarget) {
-  gsap.to(el, {
-    duration: tokens.hoverLift.duration,
-    ease: 'power2.out',
-    y: 0, scale: 1,
-  })
+  const { duration, ease, fromY, fromScale } = tokensRef.value.hoverLift
+  gsap.to(el, { duration, ease, y: fromY, scale: fromScale })
 }
 
-// @pointerdown —— press-squish（fromTo，from=pressed 0.94，to=rested 1）
+// @pointerdown —— press-squish（fromTo；to scale 由 token 提供）
 function onDown(el: gsap.TweenTarget) {
+  const { duration, ease, fromScale, toScale } = tokensRef.value.pressSquish
   gsap.fromTo(el,
-    { scale: tokens.pressSquish.fromScale },
-    { scale: 1,
-      duration: tokens.pressSquish.duration,
-      ease: tokens.pressSquish.ease },
+    { scale: fromScale },
+    { scale: toScale, duration, ease },
   )
 }
 ```
@@ -490,6 +526,11 @@ function onDown(el: gsap.TweenTarget) {
 
 ```ts
 // src/composables/useStaggerReveal.ts
+import { gsap } from 'gsap'
+import type { Ref } from 'vue'
+import { useGsapScene } from './useGsapScene'
+import { useMotionTokens } from './useMotionTokens'
+
 const FIRST_MOUNT_REGISTRY = new Set<string>()
 
 export interface StaggerRevealOptions {
@@ -507,6 +548,9 @@ export function useStaggerReveal(
   root: Ref<HTMLElement | null | undefined>,
   options: StaggerRevealOptions,
 ) {
+  // ⚠️ 不在 setup 顶层解构 .value（详见 §4.4.3 读取时机）
+  const tokensRef = useMotionTokens()
+
   useGsapScene(root, (tl, rm) => {
     const el = root.value!
     const children = el.querySelectorAll(':scope > *')
@@ -523,6 +567,7 @@ export function useStaggerReveal(
     }
     FIRST_MOUNT_REGISTRY.add(regId)
 
+    const tokens = tokensRef.value             // mount 后读，getComputedStyle 已可用
     const token = tokens[options.tokenKey]
     tl.from(children, {
       duration: token.duration,
@@ -633,12 +678,15 @@ useReducedMotion()  →  Ref<boolean>
 
 | 层 | 用例 | 工具 |
 |---|---|---|
-| Composables | `useGsapScene` 自动 cleanup；`useReducedMotion` mock matchMedia；`useStaggerReveal` 调度顺序；`useMotionTokens` 解析 CSS 变量 | Vitest + jsdom |
+| Composables | `useGsapScene` 自动 cleanup（`onBeforeUnmount` 后 `gsap.context` revert 不留残留）；`useReducedMotion` mock matchMedia；`useStaggerReveal` 调度顺序 + 首次 mount 标记去重；`useMotionTokens` 解析 CSS 变量（**含 throw `[anim] token not defined`** 覆盖） | Vitest + jsdom |
 | Choreography smoke | 每个 view mount 后断言 `gsap.globalTimeline.getChildren()` 非空 | Vitest + @vue/test-utils |
 | `MarkdownRenderer` 滚动 | mock `IntersectionObserver`，断言 ScrollTrigger 实例被创建 | Vitest |
+| **路由快速切换防泄漏** | 模拟 `HomeView ↔ PatternView` 连续 10 次切换，每次 leave/enters 都触发，每次之后 `gsap.globalTimeline.getChildren(true,true)` 数量应保持稳定（≤ 稳态 + 1），不随切次数线性增长。预期：路线 A（`gsap.killTweensOf(el)` 兜底）在 10 次切换后剩余 tween 数 = 0 或 1。 | Vitest + @vue/test-utils + 内存抽样断言 |
 | 视觉回归（独立 PR） | Playwright 截图首页首帧 / 路由切换帧 / 详情页滚动 | Playwright |
 
 重要原则：**测试只断言"动画被调度了"**——不验证 easing 数值是否一致。jsdom 里时序断言不可靠。
+
+**调试 hook**：dev 模式跑 `?debug=tweens` 路由参数时，把 `gsap.globalTimeline.getChildren(true,true).length` 输出到 console——快速验证没有 tween 累计。
 
 ## 11. 实现顺序
 
@@ -661,7 +709,7 @@ useReducedMotion()  →  Ref<boolean>
 
 | 风险 | 缓解 |
 |---|---|
-| GSAP bundle 增量 ~30-40KB gzipped | 可接受；按需 register，不引付费插件 |
+| GSAP bundle 增量 ~20-25KB gzipped（core ~17KB + ScrollTrigger ~7KB） | 可接受；按需 register，不引付费插件；如未来要更严格可换 `@vueuse/motion`，但缺 ScrollTrigger 的等效语义 |
 | CSS `transition` 与 GSAP `transform` 冲突 | 接管的属性必须 `gsap.set` 设初值，文档里点名 |
 | 详情页大量节点注册 ScrollTrigger 影响性能 | `once: true` + `cleanup` 一并降低；按章节 stagger 不按段落 |
 | 用户偏好降效时仍走完整时间线 | `useReducedMotion` 短路为 `set` 终态（mount 时刻快照） |
