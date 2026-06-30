@@ -101,8 +101,8 @@ const { leaveQuick, enterPage } = tokens
 function onLeave(el: Element, done: () => void) {
   gsap.killTweensOf(el)                                       // 兜底杀掉该节点上残留 tween
   gsap.to(el as gsap.TweenTarget, {
-    y: leaveQuick.fromY,
-    opacity: 0,
+    y: leaveQuick.toY,                                       // gsap.to 用 toY：-10（离场终点）
+    opacity: leaveQuick.toOpacity,                           // 0
     duration: leaveQuick.duration,
     ease: leaveQuick.ease,
     onComplete: done,
@@ -112,7 +112,7 @@ function onLeave(el: Element, done: () => void) {
 function onEnter(el: Element, done: () => void) {
   gsap.killTweensOf(el)
   gsap.fromTo(el as gsap.TweenTarget,
-    { y: enterPage.fromY, opacity: 0, scale: enterPage.fromScale },
+    { y: enterPage.fromY, opacity: enterPage.fromOpacity, scale: enterPage.fromScale },
     { y: 0, opacity: 1, scale: 1, duration: enterPage.duration, ease: enterPage.ease, onComplete: done },
   )
 }
@@ -120,7 +120,7 @@ function onEnter(el: Element, done: () => void) {
 ```
 
 > 注：`scale: 0.96 → 1` 提供肉眼可感的"页面入场"层级；`scale: 0.985` 在 340ms 内体感等同纯 fade，弃用。
-> token 形态（`duration` 数值、`fromY` / `fromScale`）由 `useMotionTokens()` 把 CSS 变量字符串解析成结构化对象返回——具体结构见 §4.4。
+> **字段名约定**：`MotionToken` 暴露 `fromY/toY/fromScale/toScale/fromOpacity/toOpacity`——`gsap.from` / `fromTo.from` 用 `from*`；`gsap.to` / `fromTo.to` 用 `to*`。完整结构见 §4.4。
 
 **route 钩子的清理**：本钩子位于 `App.vue`，不归任何 `useGsapScene` 的 `ctx.revert()` 管辖。需要做两件事之一：
 - **A 推荐**：在 `onLeave` / `onEnter` 开头各加 `gsap.killTweensOf(el)`，扼杀可能挂在该节点上的旧 tween（同一 `key` 切换场景下尤其有用）。
@@ -166,33 +166,184 @@ function onEnter(el: Element, done: () => void) {
 
 ### 4.4 motion 值的 source of truth：tokens.css
 
-**所有 motion 数值落在 `src/styles/tokens.css`**（与既有 `--space-*` / `--ink-*` / 圆角/阴影的来源保持一致）。TS 侧提供 `useMotionTokens()` composable 读取：
+**所有 motion 数值落在 `src/styles/tokens.css`**（与既有 `--space-*` / `--ink-*` 圆角/阴影的来源保持一致）。TS 侧 `useMotionTokens()` 读取。
+
+#### 4.4.1 `tokens.css` 新增全量（每个 token 平铺命名）
+
+```css
+/* ── hero-title（gsap.from） ── */
+--motion-hero-title-duration: 600ms;
+--motion-hero-title-from-y: 16px;
+--motion-hero-title-from-opacity: 0;
+--motion-hero-title-ease: power2.out;
+
+/* ── subhead（gsap.from） ── */
+--motion-subhead-duration: 380ms;
+--motion-subhead-from-y: 12px;
+--motion-subhead-from-opacity: 0;
+--motion-subhead-ease: back.out(1.4);
+
+/* ── entry-soft（gsap.from）卡片入场 ── */
+--motion-entry-soft-duration: 480ms;
+--motion-entry-soft-from-y: 20px;
+--motion-entry-soft-from-scale: 0.92;
+--motion-entry-soft-from-opacity: 0;
+--motion-entry-soft-ease: back.out(1.4);
+
+/* ── entry-strong（gsap.from）Hero CTA ── */
+--motion-entry-strong-duration: 520ms;
+--motion-entry-strong-from-y: 8px;
+--motion-entry-strong-from-scale: 0.92;
+--motion-entry-strong-from-opacity: 0;
+--motion-entry-strong-ease: back.out(1.6);
+
+/* ── fade-only（gsap.from）Markdown 容器、PatternHeader ── */
+--motion-fade-only-duration: 360ms;
+--motion-fade-only-from-y: 12px;
+--motion-fade-only-from-opacity: 0;
+--motion-fade-only-ease: power2.out;
+
+/* ── fade-only-tight（gsap.from）TOC 容器 ── */
+--motion-fade-only-tight-duration: 360ms;
+--motion-fade-only-tight-from-y: 8px;
+--motion-fade-only-tight-from-opacity: 0;
+--motion-fade-only-tight-ease: power2.out;
+
+/* ── reveal-scroll（gsap.from + ScrollTrigger） ── */
+--motion-reveal-scroll-duration: 420ms;
+--motion-reveal-scroll-from-y: 18px;
+--motion-reveal-scroll-from-opacity: 0;
+--motion-reveal-scroll-ease: back.out(1.4);
+
+/* ── leave-quick（gsap.to）路由退场 ── */
+--motion-leave-quick-duration: 200ms;
+--motion-leave-quick-to-y: -10px;
+--motion-leave-quick-to-opacity: 0;
+--motion-leave-quick-ease: power2.in;
+
+/* ── enter-page（gsap.fromTo）路由登场 ── */
+--motion-enter-page-duration: 340ms;
+--motion-enter-page-from-y: 14px;
+--motion-enter-page-from-scale: 0.96;
+--motion-enter-page-from-opacity: 0;
+--motion-enter-page-ease: back.out(1.1);
+
+/* ── hover-lift（gsap.to）卡悬停 ── */
+--motion-hover-lift-duration: 300ms;
+--motion-hover-lift-to-y: -4px;
+--motion-hover-lift-to-scale: 1.02;
+--motion-hover-lift-ease: back.out(1.2);
+
+/* ── press-squish（gsap.fromTo）卡/按钮按下 ── */
+--motion-press-squish-duration: 200ms;
+--motion-press-squish-from-scale: 0.94;
+--motion-press-squish-ease: power3.out;
+
+/* ── stagger 步距 ── */
+--motion-stagger-card: 50ms;
+--motion-stagger-toc: 40ms;
+--motion-stagger-hero: 110ms;
+```
+
+> 命名规则：`--motion-<token>-<field>`，`<field>` 取自 §4.4.2 类型合约。**任何一条缺失都让 `useMotionTokens()` 抛 `[anim] token not defined: --motion-xxx`**，单测断言覆盖，避免生产环境出现 `undefined`。
+
+#### 4.4.2 类型合约（`src/composables/useMotionTokens.ts`）
 
 ```ts
-// src/composables/useMotionTokens.ts
-export function useMotionTokens() {
-  return computed(() => {
-    const styles = getComputedStyle(document.documentElement)
-    return {
-      heroTitle: parseMotion(styles.getPropertyValue('--motion-hero-title')),
-      entrySoft: parseMotion(styles.getPropertyValue('--motion-entry-soft')),
-      // ...
-    }
-  })
+import type { Ref } from 'vue'
+
+/**
+ * 单条 motion token 的结构。
+ * 仅 from 系（gsap.from / fromTo.from）使用的字段标 ?optional；
+ * toY 必须 from 系永远填 0 也行——为类型一致，fromY 一律 required。
+ */
+export type MotionToken = {
+  /** 持续时间，秒（GSAP 默认秒）。'480ms' → 0.48 */
+  duration: number
+  /** GSAP 内置缓动字符串，原样喂 GSAP */
+  ease: string
+  /** from 系使用的起始 Y（px） */
+  fromY: number
+  /** to 系使用的目标 / 离场 Y（px），可选 */
+  toY?: number
+  /** from 系使用的起始 scale，可选（无 scale 变化则不设） */
+  fromScale?: number
+  /** to 系使用的目标 scale，可选 */
+  toScale?: number
+  /** from 系使用的起始 opacity，可选 */
+  fromOpacity?: number
+  /** to 系使用的目标 opacity，可选 */
+  toOpacity?: number
 }
+
+export interface MotionTokensMap {
+  heroTitle: MotionToken
+  subhead: MotionToken
+  entrySoft: MotionToken
+  entryStrong: MotionToken
+  fadeOnly: MotionToken
+  fadeOnlyTight: MotionToken
+  revealScroll: MotionToken
+  leaveQuick: MotionToken
+  enterPage: MotionToken
+  hoverLift: MotionToken
+  pressSquish: MotionToken
+  /** stagger 步距，单位秒 */
+  staggerCard: number
+  staggerToc: number
+  staggerHero: number
+}
+
+export function useMotionTokens(): Readonly<Ref<MotionTokensMap>>
 ```
 
-```
-src/styles/tokens.css 新增条目示例：
-  --motion-duration-fast: 200ms;
-  --motion-duration-base: 360ms;
-  --motion-duration-slow: 600ms;
-  --motion-stagger-card: 50ms;
-  --motion-stagger-toc: 40ms;
-  --motion-stagger-hero: 110ms;
+#### 4.4.3 解析实现要点
+
+- `parseMs(str)`：`'480ms'` / `'0.5s'` → number 秒
+- `parsePx(str)`：`'20px'` / `'14'` → number
+- `parseNum(str)`：`'0.92'` → number
+- 每个 `useMotionTokens()` 调用在 mount 时一次性 `getComputedStyle(document.documentElement)` 读全部变量并 cache
+- 缺变量：`throw new Error('[anim] token not defined: ' + name)`，避免静默 undefined 浮到动画里出现 NaN
+
+#### 4.4.4 调用约定
+
+```ts
+import { gsap } from 'gsap'
+import { useMotionTokens } from '@/composables/useMotionTokens'
+
+const { value: tokens } = useMotionTokens()
+
+// gsap.from：起始字段
+gsap.from(el, {
+  duration: tokens.entrySoft.duration,
+  ease: tokens.entrySoft.ease,
+  y: tokens.entrySoft.fromY,
+  scale: tokens.entrySoft.fromScale,
+  opacity: tokens.entrySoft.fromOpacity,
+  stagger: tokens.staggerCard,
+})
+
+// gsap.to：目标字段
+gsap.to(el, {
+  duration: tokens.leaveQuick.duration,
+  ease: tokens.leaveQuick.ease,
+  y: tokens.leaveQuick.toY,
+  opacity: tokens.leaveQuick.toOpacity,
+})
+
+// gsap.fromTo：双显两端
+gsap.fromTo(el,
+  { y: tokens.enterPage.fromY,
+    scale: tokens.enterPage.fromScale,
+    opacity: tokens.enterPage.fromOpacity },
+  { y: 0, scale: 1, opacity: 1,
+    duration: tokens.enterPage.duration,
+    ease: tokens.enterPage.ease },
+)
 ```
 
-**为什么选 CSS 单一来源**：
+#### 4.4.5 为什么选 CSS 单一来源
+
 1. 与项目既有 tokens.css 写法一致（CLAUDE.md 强调"颜色/间距/圆角/阴影/字体一律用 tokens.css 的 CSS 自定义变量"）
 2. 未来主题切换 / 用户可调（如"动画速度"开关）可直接 CSS 变量覆盖
 3. 不存在"TS 改了 CSS 没跟"的双源漂移
@@ -236,13 +387,13 @@ tests/
 |---|---|
 | `src/main.ts` | 入口顶部调 `gsap.registerPlugin(ScrollTrigger)`，早于 `app.mount()` |
 | `src/App.vue` | `RouterView` v-slot + `<Transition>` + `onEnter`/`onLeave` 钩子（参考 §3.4 选 A 清理路线） |
-| `src/styles/tokens.css` | 增 §4.4 列出的 `--motion-*` 令牌 |
+| `src/styles/tokens.css` | 全量新增 §4.4.1 列出的 `--motion-*` 令牌 |
 | `src/components/home/HeroSection.vue` | `useStaggerReveal` 应用到标题/CTA，引用 token 名 |
 | `src/components/home/CategorySection.vue` | 进入视口时对所属卡片 stagger 入场 |
 | `src/components/home/PatternCard.vue` 或 `ClayCard.vue` | hover/click GSAP 接管（移除 CSS transform transition），用 `hover-lift` / `press-squish` token |
 | `src/components/pattern/PatternHeader.vue` | 进入视口时入场动画，引用 `fade-only` token |
 | `src/components/pattern/MarkdownRenderer.vue` | 内容更新后 `ScrollTrigger.refresh()`；h2/h3/img/pre 入视口浮现，引用 `reveal-scroll` token |
-| `src/components/pattern/PatternToc.vue` | TOC 项淡入**仅首次 mount 触发**；路由切换的整页 fade 已包含 TOC 区，TOC 内部不再独立 fade，避免动画叠加 |
+| `src/components/pattern/PatternToc.vue` | TOC 项淡入**仅首次 mount 触发**（首次 mount 策略见 §6.6）；路由切换的整页 fade 已包含 TOC 区 |
 | `src/views/HomeView.vue` | 编排"先 Hero 后 Catalog"两段时间线 |
 | `src/views/PatternView.vue` | 编排"Header → Markdown → TOC"三段时间线 |
 
@@ -292,27 +443,144 @@ t=200   TOC 容器              应用 fade-only-tight
 
 ### 6.5 微交互
 
-- `ClayCard`：
-  - `@pointerenter`：`gsap.to(el, hover-lift)`
-  - `@pointerleave`：`gsap.to(el, { duration: hover-lift.duration, y: 0, scale: 1, ease: 'power2.out' })`
-  - `@pointerdown`：`gsap.fromTo(el, { scale: 0.94 }, press-squish)`
-- `ClayButton`：hover 同卡片，press **共用** `press-squish` token（统一 0.94 → 1）。
-- 用 `@pointer*` 不带 delay，避免视觉走样。
+```ts
+// src/components/ui/ClayCard.vue （或包裹它的 PatternCard.vue）
+import { gsap } from 'gsap'
+import { useMotionTokens } from '@/composables/useMotionTokens'
+
+const { value: tokens } = useMotionTokens()
+
+// @pointerenter —— 拾起 lift
+function onEnter(el: gsap.TweenTarget) {
+  gsap.to(el, {
+    duration: tokens.hoverLift.duration,
+    ease: tokens.hoverLift.ease,
+    y: tokens.hoverLift.toY,
+    scale: tokens.hoverLift.toScale,
+  })
+}
+
+// @pointerleave —— 回静止
+function onLeave(el: gsap.TweenTarget) {
+  gsap.to(el, {
+    duration: tokens.hoverLift.duration,
+    ease: 'power2.out',
+    y: 0, scale: 1,
+  })
+}
+
+// @pointerdown —— press-squish（fromTo，from=pressed 0.94，to=rested 1）
+function onDown(el: gsap.TweenTarget) {
+  gsap.fromTo(el,
+    { scale: tokens.pressSquish.fromScale },
+    { scale: 1,
+      duration: tokens.pressSquish.duration,
+      ease: tokens.pressSquish.ease },
+  )
+}
+```
+
+`ClayButton` 完全共用上述三函数（hover 同 token、press 同 token，无独立覆写）。`@pointer*` 不带 delay，避免视觉走样。
+
+### 6.6 PatternToc 首次 mount 触发策略
+
+> §5.3 提到 PatternToc 仅"首次 mount"做 TOC 项淡入，路由切换的整页 fade 已包含 TOC 主体。问题是：**实施时怎么判定"这次 mount 是首次"？**
+
+采用**方案 A：模块级 `Set<registryId>` 跟踪**（最简单、不依赖 `<KeepAlive>` 行为、不污染视图）：
+
+```ts
+// src/composables/useStaggerReveal.ts
+const FIRST_MOUNT_REGISTRY = new Set<string>()
+
+export interface StaggerRevealOptions {
+  /** 同一 registryId 首次调用跑动画；后续瞬时终态 gsap.set 不动画。 */
+  registryId?: string
+  /** 选用的 token key */
+  tokenKey: keyof Pick<MotionTokensMap,
+    'subhead' | 'entrySoft' | 'fadeOnly' | 'fadeOnlyTight'>
+  /** stagger 步距 token key */
+  staggerKey: keyof Pick<MotionTokensMap,
+    'staggerCard' | 'staggerToc' | 'staggerHero'>
+}
+
+export function useStaggerReveal(
+  root: Ref<HTMLElement | null | undefined>,
+  options: StaggerRevealOptions,
+) {
+  useGsapScene(root, (tl, rm) => {
+    const el = root.value!
+    const children = el.querySelectorAll(':scope > *')
+
+    if (rm.value) {
+      gsap.set(children, { opacity: 1, y: 0, scale: 1 })
+      return
+    }
+
+    const regId = options.registryId ?? `__default-${options.tokenKey}`
+    if (FIRST_MOUNT_REGISTRY.has(regId)) {
+      gsap.set(children, { opacity: 1, y: 0, scale: 1 })   // 后续 mount 瞬时终态
+      return
+    }
+    FIRST_MOUNT_REGISTRY.add(regId)
+
+    const token = tokens[options.tokenKey]
+    tl.from(children, {
+      duration: token.duration,
+      ease: token.ease,
+      y: token.fromY,
+      opacity: token.fromOpacity,
+      stagger: tokens[options.staggerKey],
+    })
+  })
+}
+```
+
+**PatternToc.vue 用法**：
+
+```vue
+<script setup lang="ts">
+import { useStaggerReveal } from '@/composables/useStaggerReveal'
+const tocEl = ref<HTMLElement | null>(null)
+useStaggerReveal(tocEl, {
+  tokenKey: 'subhead',
+  staggerKey: 'staggerToc',
+  registryId: 'pattern-toc',  // 全站共用一份"是否首次 mount TOC"
+})
+</script>
+```
+
+> **不选中方案 B（`<KeepAlive>`）**：会改变 PatternView 的卸载行为，与 hash 路由 + 默认重渲的现状不一致。
+> **不选 C（`useRoute().fullPath` 跟踪）**：会让 22 个不同的 fullPath 都被视为"首次"，实际是模式 B 的弱化版——同问题不同名。
 
 ## 7. `prefers-reduced-motion` 处理
 
 `useReducedMotion()` 暴露 `Ref<boolean>`，包裹 `matchMedia('(prefers-reduced-motion: reduce)')`，系统设置改变时跟随 reactive 更新。
 
-`useGsapScene` 的 build 回调**拿到 `rm` 标记的瞬时值**（mount 那一刻的快照，下一次重 mount 才重新读取）：
+`useGsapScene` 的 build 回调**拿到 `rm` 标记的瞬时值**（mount 那一刻的快照，下一次重 mount 才重新读取）。
+
+> 下面的代码块是**教学示例**：用裸数字把 `entry-soft` 的语义展开写一遍，便于读者照着 §4.1 表对照阅读。
+> **生产代码应当读 `useMotionTokens()`**——按 §4.4.4 调用约定写：
+>
+> ```ts
+> gsap.from(el, {
+>   duration: tokens.entrySoft.duration,
+>   ease:     tokens.entrySoft.ease,
+>   y:        tokens.entrySoft.fromY,
+>   scale:    tokens.entrySoft.fromScale,
+>   opacity:  tokens.entrySoft.fromOpacity,
+>   stagger:  tokens.staggerCard,
+> })
+> ```
 
 ```ts
+// 教学示例：上面的 token 形式展开后等价于下面这行
 useGsapScene(root, (tl, rm) => {
   if (rm.value) {
     gsap.set(root.value!, { opacity: 1, y: 0, scale: 1 })
     return
   }
   // 对应 §4.1 token `entry-soft`（y 20→0, scale 0.92→1, 480ms, back.out(1.4)）
-  // + §4.4 stagger 变量 `--motion-stagger-card` (50ms)
+  // 对应 §4.4 stagger 变量 `--motion-stagger-card` (50ms)
   tl.from(root.value!.querySelectorAll('.card'), {
     y: 20, scale: 0.92, opacity: 0, duration: 0.48,
     ease: 'back.out(1.4)', stagger: 0.05,
@@ -374,8 +642,8 @@ useReducedMotion()  →  Ref<boolean>
 
 ## 11. 实现顺序
 
-1. 安装 `gsap` + 配置 `tsconfig.app.json` types；`main.ts` register ScrollTrigger
-2. 在 `src/styles/tokens.css` 新增 §4.4 列出的 `--motion-*` 令牌
+1. 安装 `gsap`（自带 `.d.ts` + Bundler moduleResolution 自动解析，无需 `tsconfig` 调整）；`main.ts` 在 `app.mount()` 之前 `gsap.registerPlugin(ScrollTrigger)`
+2. 在 `src/styles/tokens.css` **全量新增 §4.4.1 列出的 `--motion-*` 令牌**（缺一条都会让 §4.4.3 的运行期抛错）
 3. 新建 `useReducedMotion.ts` + 单测
 4. 新建 `useMotionTokens.ts` + 单测（读 CSS 变量）
 5. 新建 `useGsapScene.ts` + 单测
@@ -385,7 +653,7 @@ useReducedMotion()  →  Ref<boolean>
 9. 改 `HomeView.vue`：编排"先 Hero 后 Catalog"两段时间线
 10. 改 `CategorySection.vue` / `PatternCard.vue` 入场 + 微交互
 11. 改 `PatternHeader.vue` + `MarkdownRenderer.vue` 入场 + 滚动驱动
-12. 改 `PatternToc.vue`：仅首次 mount 触发 TOC 项淡入
+12. 改 `PatternToc.vue`：调用 `useStaggerReveal` 并传 `registryId: 'pattern-toc'`——按 §6.6 策略模块级 Set 去重，仅首次 mount 触发 TOC 项淡入
 13. 改 `PatternView.vue`：编排 Header → Markdown → TOC 三段时间线
 14. 跑 `npm test` + `npm run build`，修类型 / 单元 / 视觉
 
