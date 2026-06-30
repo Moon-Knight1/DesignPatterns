@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
 import Container from '@/components/layout/Container.vue'
-import SiteFooter from '@/components/layout/SiteFooter.vue'
 import PatternHeader from '@/components/pattern/PatternHeader.vue'
 import MarkdownRenderer from '@/components/pattern/MarkdownRenderer.vue'
 import PatternToc from '@/components/pattern/PatternToc.vue'
@@ -55,7 +54,6 @@ useHead(() => ({
       </div>
     </template>
   </Container>
-  <SiteFooter />
 </template>
 
 <style scoped>

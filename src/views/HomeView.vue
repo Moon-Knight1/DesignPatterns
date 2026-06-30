@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useHead } from '@vueuse/head'
 import Container from '@/components/layout/Container.vue'
-import SiteFooter from '@/components/layout/SiteFooter.vue'
 import HeroSection from '@/components/home/HeroSection.vue'
 import PatternCatalog from '@/components/home/PatternCatalog.vue'
 
@@ -22,5 +21,4 @@ useHead({
     <HeroSection />
     <PatternCatalog />
   </Container>
-  <SiteFooter />
 </template>

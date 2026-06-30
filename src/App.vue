@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router'
 import { gsap } from 'gsap'
 import { useMotionTokens } from '@/composables/useMotionTokens'
+import SiteFooter from '@/components/layout/SiteFooter.vue'
 
 // ⚠️ 顶层只接 ref，.value 在 Transition 钩子里读（spec §4.4.3）
 const tokensRef = useMotionTokens()
@@ -38,4 +39,5 @@ function onEnter(el: Element, done: () => void) {
       </Transition>
     </RouterView>
   </main>
+  <SiteFooter />
 </template>

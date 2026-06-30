@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useHead } from '@vueuse/head'
 import Container from '@/components/layout/Container.vue'
-import SiteFooter from '@/components/layout/SiteFooter.vue'
 
 useHead({
   title: '关于 · 23 种设计模式',
@@ -48,7 +47,6 @@ useHead({
       </section>
     </article>
   </Container>
-  <SiteFooter />
 </template>
 
 <style scoped>
