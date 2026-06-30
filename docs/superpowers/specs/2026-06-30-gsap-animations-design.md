@@ -88,10 +88,39 @@ export function useGsapScene(
 </RouterView>
 ```
 
-`onLeave(el, done)`：`gsap.to(el, { y: -10, opacity: 0, duration: 0.2, ease: 'power2.in', onComplete: done })`
-`onEnter(el, done)`：`gsap.fromTo(el, { y: 14, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 0.34, ease: 'back.out(1.1)', onComplete: done })`
+实现模板（路线 A 清理，参数读自 `useMotionTokens()`，**不放任何裸数字**）：
+
+```vue
+<script setup lang="ts">
+import { gsap } from 'gsap'
+import { useMotionTokens } from '@/composables/useMotionTokens'
+
+const { value: tokens } = useMotionTokens()
+const { leaveQuick, enterPage } = tokens
+
+function onLeave(el: Element, done: () => void) {
+  gsap.killTweensOf(el)                                       // 兜底杀掉该节点上残留 tween
+  gsap.to(el as gsap.TweenTarget, {
+    y: leaveQuick.fromY,
+    opacity: 0,
+    duration: leaveQuick.duration,
+    ease: leaveQuick.ease,
+    onComplete: done,
+  })
+}
+
+function onEnter(el: Element, done: () => void) {
+  gsap.killTweensOf(el)
+  gsap.fromTo(el as gsap.TweenTarget,
+    { y: enterPage.fromY, opacity: 0, scale: enterPage.fromScale },
+    { y: 0, opacity: 1, scale: 1, duration: enterPage.duration, ease: enterPage.ease, onComplete: done },
+  )
+}
+</script>
+```
 
 > 注：`scale: 0.96 → 1` 提供肉眼可感的"页面入场"层级；`scale: 0.985` 在 340ms 内体感等同纯 fade，弃用。
+> token 形态（`duration` 数值、`fromY` / `fromScale`）由 `useMotionTokens()` 把 CSS 变量字符串解析成结构化对象返回——具体结构见 §4.4。
 
 **route 钩子的清理**：本钩子位于 `App.vue`，不归任何 `useGsapScene` 的 `ctx.revert()` 管辖。需要做两件事之一：
 - **A 推荐**：在 `onLeave` / `onEnter` 开头各加 `gsap.killTweensOf(el)`，扼杀可能挂在该节点上的旧 tween（同一 `key` 切换场景下尤其有用）。
@@ -114,6 +143,7 @@ export function useGsapScene(
 | `entry-soft` | 480ms | 20px → 0 | 0.92 → 1 | `back.out(1.4)` | 卡片入场 |
 | `entry-strong` | 520ms | 8px → 0 | 0.92 → 1 | `back.out(1.6)` | Hero CTA 按钮 |
 | `fade-only` | 360ms | 12px → 0 | 1 | `power2.out` | Markdown 容器、PatternHeader |
+| `fade-only-tight` | 360ms | 8px → 0 | 1 | `power2.out` | TOC 容器（弱位移，整页过渡已含 TOC 主体） |
 | `reveal-scroll` | 420ms | 18px → 0 | 1 | `back.out(1.4)` | ScrollTrigger 浮现 |
 | `leave-quick` | 200ms | 0 → -10px | 1 | `power2.in` | 路由退场 |
 | `enter-page` | 340ms | 14px → 0 | 0.96 → 1 | `back.out(1.1)` | 路由登场 |
@@ -243,7 +273,7 @@ t=200   卡片 #1          应用 entry-soft
 ```
 t=0     PatternHeader 块      应用 fade-only
 t=120   Markdown 容器         应用 fade-only
-t=200   TOC 容器              应用 fade-only 但 translation 缩短为 8px
+t=200   TOC 容器              应用 fade-only-tight
                               （TOC 项即时可见，不延迟感）
 ```
 
@@ -253,6 +283,7 @@ t=200   TOC 容器              应用 fade-only 但 translation 缩短为 8px
 - 触发：节点进入视口 `top 80%` 时启动
   > 阈值选 `top 80%` 而非 `top bottom-=15` / `top 90%`：太晚元素已完全可见，缺"浮现"感；太早（如 `top center`）正文还没读到下一节就出现，喧宾夺主。
 - 行为：`reveal-scroll` token，`once: true`
+- `markers: false`：默认关闭——一旦忘了关，ScrollTrigger 会在生产页面留下 `start: ...` / `end: ...` 调试浮标，污染 GitHub Pages 视觉。`markers: import.meta.env.DEV` 限定仅开发态开启。
 - `ScrollTrigger.refresh()` 必须放在 `MarkdownRenderer` 的 `onUpdated` 钩子里调，确保 markdown 替换内容后锚点重算
 
 ### 6.4 页间过渡
@@ -280,6 +311,8 @@ useGsapScene(root, (tl, rm) => {
     gsap.set(root.value!, { opacity: 1, y: 0, scale: 1 })
     return
   }
+  // 对应 §4.1 token `entry-soft`（y 20→0, scale 0.92→1, 480ms, back.out(1.4)）
+  // + §4.4 stagger 变量 `--motion-stagger-card` (50ms)
   tl.from(root.value!.querySelectorAll('.card'), {
     y: 20, scale: 0.92, opacity: 0, duration: 0.48,
     ease: 'back.out(1.4)', stagger: 0.05,
@@ -294,9 +327,17 @@ Hero 退化为纯透明渐变，路由过渡退化为纯不透明切换，滚动
 ## 8. 数据流
 
 ```
-系统 prefers-reduced-motion 变化
+tokens.css（--motion-* 变量，source of truth）
         │
-        ▼  matchMedia reactive
+        ▼  getComputedStyle（mount 时一次性 compute）
+useMotionTokens()  →  Ref<{ entrySoft, heroTitle, ... }>
+        │
+        ▼  read tokens
+useGsapScene / useStaggerReveal / App.vue route 钩子
+        │
+        ▼
+系统 prefers-reduced-motion 变化
+        │  matchMedia reactive
 useReducedMotion()  →  Ref<boolean>
         │
         ├─→ useGsapScene(root, build)  ← 组件 onMounted 读快照
@@ -341,9 +382,12 @@ useReducedMotion()  →  Ref<boolean>
 6. 新建 `useStaggerReveal.ts` + 单测
 7. 改 `App.vue`：`<RouterView v-slot>` + `<Transition>` + 钩子（含 `gsap.killTweensOf(el)` 兜底）
 8. 改 `HeroSection.vue` 入场（引用 token 名）
-9. 改 `CategorySection.vue` / `PatternCard.vue` 入场 + 微交互
-10. 改 `PatternHeader.vue` + `MarkdownRenderer.vue` 入场 + 滚动驱动
-11. 跑 `npm test` + `npm run build`，修类型 / 单元 / 视觉
+9. 改 `HomeView.vue`：编排"先 Hero 后 Catalog"两段时间线
+10. 改 `CategorySection.vue` / `PatternCard.vue` 入场 + 微交互
+11. 改 `PatternHeader.vue` + `MarkdownRenderer.vue` 入场 + 滚动驱动
+12. 改 `PatternToc.vue`：仅首次 mount 触发 TOC 项淡入
+13. 改 `PatternView.vue`：编排 Header → Markdown → TOC 三段时间线
+14. 跑 `npm test` + `npm run build`，修类型 / 单元 / 视觉
 
 ## 12. 风险与权衡
 
@@ -354,7 +398,7 @@ useReducedMotion()  →  Ref<boolean>
 | 详情页大量节点注册 ScrollTrigger 影响性能 | `once: true` + `cleanup` 一并降低；按章节 stagger 不按段落 |
 | 用户偏好降效时仍走完整时间线 | `useReducedMotion` 短路为 `set` 终态（mount 时刻快照） |
 | jsdom 无法测交互动画 | 单元测调度，视觉另起 Playwright |
-| `verbatimModuleSyntax` 严格模式下 GSAP 类型导入 | `import type { gsap }` 单独行 |
+| `verbatimModuleSyntax` 严格模式下 GSAP 类型导入 | GSAP 的 `gsap` 是值+命名空间合并导出（不是纯类型），`import type { gsap }` 编译会报错。改成两行：<br>`import { gsap } from 'gsap'` 取运行时；<br>`import type { Timeline, Context } from 'gsap'` 取类型 |
 | tokens.css 与 TS 双方 motion 漂移 | 单一来源定在 CSS，TS 仅读不解（§4.4） |
 
 ## 13. 非目标（明确不做）
