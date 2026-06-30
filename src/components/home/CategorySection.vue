@@ -1,9 +1,24 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import CategoryChip from '@/components/ui/CategoryChip.vue'
 import PatternCard from './PatternCard.vue'
 import type { CategoryMeta } from '@/data/patterns'
+import { useStaggerReveal } from '@/composables/useStaggerReveal'
 
 defineProps<{ category: CategoryMeta }>()
+
+const gridEl = ref<HTMLElement | null>(null)
+useStaggerReveal(gridEl, {
+  registryId: 'category-cards',
+  tokenKey: 'entrySoft',
+  staggerKey: 'staggerCard',
+})
+
+const accentFor: Record<string, string> = {
+  creational: 'var(--cat-creational)',
+  structural: 'var(--cat-structural)',
+  behavioral: 'var(--cat-behavioral)',
+}
 </script>
 
 <template>
@@ -13,12 +28,12 @@ defineProps<{ category: CategoryMeta }>()
       <h2 class="title">{{ category.zh }}</h2>
       <span class="count">{{ category.items.length }} 个模式</span>
     </div>
-    <div class="grid">
+    <div ref="gridEl" class="grid">
       <PatternCard
         v-for="p in category.items"
         :key="p.slug"
         :pattern="p"
-        :accent-color="category.color"
+        :accent-color="accentFor[category.items[0]?.category ?? 'creational']"
       />
     </div>
   </section>

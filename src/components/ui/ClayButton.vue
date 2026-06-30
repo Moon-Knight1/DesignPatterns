@@ -33,8 +33,7 @@ defineProps<{
   font-size: 16px;
   line-height: 1;
   box-shadow: var(--shadow-clay-out);
-  transition: transform var(--duration-fast) var(--ease-out),
-              box-shadow var(--duration-fast) var(--ease-out);
+  transition: box-shadow var(--duration-fast) var(--ease-out);
   cursor: pointer;
   user-select: none;
 }
@@ -56,12 +55,10 @@ defineProps<{
 }
 
 .clay-button:hover {
-  transform: translateY(-1px);
   box-shadow: var(--shadow-clay-out-lg);
 }
 
 .clay-button:active {
-  transform: translateY(0);
   box-shadow: var(--shadow-clay-press);
 }
 
