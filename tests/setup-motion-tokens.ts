@@ -1,0 +1,73 @@
+// Vitest setup: inject motion tokens CSS custom properties for jsdom environment.
+// This allows useMotionTokens to work in tests without throwing.
+if (typeof document !== 'undefined' && document.documentElement) {
+  // Mock window.matchMedia for reduced-motion check
+  if (typeof window !== 'undefined' && !window.matchMedia) {
+    window.matchMedia = (query: string) => ({
+      matches: false,
+      media: query,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => true,
+    })
+  }
+
+  const tokens = [
+    '--motion-hero-title-duration: 600ms',
+    '--motion-hero-title-from-y: 16px',
+    '--motion-hero-title-from-opacity: 0',
+    '--motion-hero-title-ease: power2.out',
+    '--motion-subhead-duration: 380ms',
+    '--motion-subhead-from-y: 12px',
+    '--motion-subhead-from-opacity: 0',
+    '--motion-subhead-ease: back.out(1.4)',
+    '--motion-entry-soft-duration: 480ms',
+    '--motion-entry-soft-from-y: 20px',
+    '--motion-entry-soft-from-scale: 0.92',
+    '--motion-entry-soft-from-opacity: 0',
+    '--motion-entry-soft-ease: back.out(1.4)',
+    '--motion-entry-strong-duration: 520ms',
+    '--motion-entry-strong-from-y: 8px',
+    '--motion-entry-strong-from-scale: 0.92',
+    '--motion-entry-strong-from-opacity: 0',
+    '--motion-entry-strong-ease: back.out(1.6)',
+    '--motion-fade-only-duration: 360ms',
+    '--motion-fade-only-from-y: 12px',
+    '--motion-fade-only-from-opacity: 0',
+    '--motion-fade-only-ease: power2.out',
+    '--motion-fade-only-tight-duration: 360ms',
+    '--motion-fade-only-tight-from-y: 8px',
+    '--motion-fade-only-tight-from-opacity: 0',
+    '--motion-fade-only-tight-ease: power2.out',
+    '--motion-reveal-scroll-duration: 420ms',
+    '--motion-reveal-scroll-from-y: 18px',
+    '--motion-reveal-scroll-from-opacity: 0',
+    '--motion-reveal-scroll-ease: back.out(1.4)',
+    '--motion-leave-quick-duration: 200ms',
+    '--motion-leave-quick-from-y: -8px',
+    '--motion-leave-quick-to-y: 8px',
+    '--motion-leave-quick-ease: power2.in',
+    '--motion-enter-page-duration: 320ms',
+    '--motion-enter-page-from-y: 4px',
+    '--motion-enter-page-from-opacity: 0',
+    '--motion-enter-page-ease: power2.out',
+    '--motion-hover-lift-duration: 200ms',
+    '--motion-hover-lift-from-y: 0px',
+    '--motion-hover-lift-to-y: -2px',
+    '--motion-hover-lift-ease: power2.out',
+    '--motion-press-squish-duration: 200ms',
+    '--motion-press-squish-from-y: 0',
+    '--motion-press-squish-from-scale: 0.94',
+    '--motion-press-squish-from-opacity: 1',
+    '--motion-press-squish-to-y: 0',
+    '--motion-press-squish-to-scale: 1',
+    '--motion-press-squish-to-opacity: 1',
+    '--motion-press-squish-ease: power3.out',
+    '--motion-stagger-card: 60ms',
+    '--motion-stagger-toc: 40ms',
+    '--motion-stagger-hero: 80ms',
+  ]
+  document.documentElement.style.cssText = tokens.join('; ')
+}
