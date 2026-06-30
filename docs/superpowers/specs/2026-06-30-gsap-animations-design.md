@@ -350,39 +350,53 @@ CSS 注入时序：
 
 ```ts
 import { gsap } from 'gsap'
+import { useGsapScene } from '@/composables/useGsapScene'
 import { useMotionTokens } from '@/composables/useMotionTokens'
+import type { Ref } from 'vue'
 
-const { value: tokens } = useMotionTokens()
+// ⚠️ 顶层只接 ref，不解构 .value（详见 §4.4.3 时序）
+const tokensRef = useMotionTokens()
 
-// gsap.from：起始字段
-gsap.from(el, {
-  duration: tokens.entrySoft.duration,
-  ease: tokens.entrySoft.ease,
-  y: tokens.entrySoft.fromY,
-  scale: tokens.entrySoft.fromScale,
-  opacity: tokens.entrySoft.fromOpacity,
-  stagger: tokens.staggerCard,
+// ⚠️ 所有 gsap.from / gsap.to / gsap.fromTo 都必须包在 useGsapScene 的 build 回调内，
+//   由 gsap.context().revert() 统一清理——避免组件卸载后的幽灵 tween。
+useGsapScene(rootRef as Ref<HTMLElement | null | undefined>, (tl, rm) => {
+  const tokens = tokensRef.value      // mount 后此处读 getComputedStyle，安全
+
+  if (rm.value) {
+    gsap.set(el as gsap.TweenTarget, { opacity: 1, y: 0, scale: 1 })
+    return
+  }
+
+  // gsap.from：起始字段（entry-soft 卡片入场）
+  gsap.from(el as gsap.TweenTarget, {
+    duration: tokens.entrySoft.duration,
+    ease: tokens.entrySoft.ease,
+    y: tokens.entrySoft.fromY,
+    scale: tokens.entrySoft.fromScale,
+    opacity: tokens.entrySoft.fromOpacity,
+    stagger: tokens.staggerCard,
+  })
+
+  // gsap.to：目标字段（leave-quick 路由退场）
+  gsap.to(el as gsap.TweenTarget, {
+    duration: tokens.leaveQuick.duration,
+    ease: tokens.leaveQuick.ease,
+    y: tokens.leaveQuick.toY,
+    opacity: tokens.leaveQuick.toOpacity,
+  })
+
+  // gsap.fromTo：双显两端（enter-page 路由登场）
+  gsap.fromTo(el as gsap.TweenTarget,
+    { y: tokens.enterPage.fromY,
+      scale: tokens.enterPage.fromScale,
+      opacity: tokens.enterPage.fromOpacity },
+    { y: tokens.enterPage.toY,
+      scale: tokens.enterPage.toScale,
+      opacity: tokens.enterPage.toOpacity,
+      duration: tokens.enterPage.duration,
+      ease: tokens.enterPage.ease },
+  )
 })
-
-// gsap.to：目标字段
-gsap.to(el, {
-  duration: tokens.leaveQuick.duration,
-  ease: tokens.leaveQuick.ease,
-  y: tokens.leaveQuick.toY,
-  opacity: tokens.leaveQuick.toOpacity,
-})
-
-// gsap.fromTo：双显两端
-gsap.fromTo(el,
-  { y: tokens.enterPage.fromY,
-    scale: tokens.enterPage.fromScale,
-    opacity: tokens.enterPage.fromOpacity },
-  { y: tokens.enterPage.toY,
-    scale: tokens.enterPage.toScale,
-    opacity: tokens.enterPage.toOpacity,
-    duration: tokens.enterPage.duration,
-    ease: tokens.enterPage.ease },
-)
 ```
 
 #### 4.4.5 为什么选 CSS 单一来源
@@ -604,16 +618,21 @@ useStaggerReveal(tocEl, {
 `useGsapScene` 的 build 回调**拿到 `rm` 标记的瞬时值**（mount 那一刻的快照，下一次重 mount 才重新读取）。
 
 > 下面的代码块是**教学示例**：用裸数字把 `entry-soft` 的语义展开写一遍，便于读者照着 §4.1 表对照阅读。
-> **生产代码应当读 `useMotionTokens()`**——按 §4.4.4 调用约定写：
+> **生产代码应当读 `useMotionTokens()`**——按 §4.4.4 调用约定写（顶层 `tokensRef`、回调内 `.value`、包在 `useGsapScene` 内）：
 >
 > ```ts
-> gsap.from(el, {
->   duration: tokens.entrySoft.duration,
->   ease:     tokens.entrySoft.ease,
->   y:        tokens.entrySoft.fromY,
->   scale:    tokens.entrySoft.fromScale,
->   opacity:  tokens.entrySoft.fromOpacity,
->   stagger:  tokens.staggerCard,
+> const tokensRef = useMotionTokens()
+> useGsapScene(root, (tl, rm) => {
+>   const tokens = tokensRef.value          // mount 后读取
+>   if (rm.value) { gsap.set(el, { opacity: 1, y: 0, scale: 1 }); return }
+>   gsap.from(el, {
+>     duration: tokens.entrySoft.duration,
+>     ease:     tokens.entrySoft.ease,
+>     y:        tokens.entrySoft.fromY,
+>     scale:    tokens.entrySoft.fromScale,
+>     opacity:  tokens.entrySoft.fromOpacity,
+>     stagger:  tokens.staggerCard,
+>   })
 > })
 > ```
 
