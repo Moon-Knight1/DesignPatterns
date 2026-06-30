@@ -130,7 +130,7 @@ function loadTokens(): Readonly<MotionTokensMap> {
     return {
       duration: durationVal,
       ease: easeVal,
-      fromY: fromYVal ?? 0,
+      fromY: fromYVal,
       toY: toYVal,
       fromScale: fromScaleVal,
       toScale: toScaleVal,
