@@ -102,7 +102,6 @@ function setupScrollReveal() {
       scrollTrigger: {
         trigger: el,
         start: 'top 80%',
-        markers: import.meta.env.DEV,
         once: true,
       },
     })
