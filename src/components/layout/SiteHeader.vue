@@ -53,6 +53,21 @@ import Container from './Container.vue'
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  will-change: transform, backdrop-filter;
+}
+
+/* Browsers without backdrop-filter (older Firefox, etc.) need a solid-ish
+   background or the sticky header becomes transparent over content. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header {
+    background: rgba(255, 247, 240, 0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header {
+    will-change: auto;
+  }
 }
 
 .bar {

@@ -153,6 +153,10 @@
   --motion-stagger-card: 50ms;
   --motion-stagger-toc: 40ms;
   --motion-stagger-hero: 110ms;
+
+  /* Ambient motion (pure-CSS, no JS consumption) */
+  --motion-mesh-duration: 30s;
+  /* --motion-parallax-distance: 15%;  reserved for future parallax in MarkdownRenderer */
 }
 
 @media (min-width: 768px) {

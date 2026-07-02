@@ -23,6 +23,13 @@ defineProps<{
   padding: var(--space-5);
   box-shadow: var(--shadow-clay-out);
   transition: box-shadow var(--duration-fast) var(--ease-out);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clay-card {
+    will-change: auto;
+  }
 }
 
 .clay-card--interactive {

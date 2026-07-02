@@ -70,6 +70,13 @@ function onDown() {
   display: block;
   text-decoration: none;
   color: inherit;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    will-change: auto;
+  }
 }
 
 .row {

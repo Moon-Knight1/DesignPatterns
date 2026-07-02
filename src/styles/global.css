@@ -3,11 +3,29 @@ body {
   font-size: 16px;
   color: var(--ink-900);
   background-color: var(--bg-cream);
+}
+
+/* Living mesh-gradient wash — pseudo-element instead of background-attachment:fixed
+   to avoid iOS Safari jank. The three category-color washes drift slowly. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
     radial-gradient(circle at 10% 10%, var(--cat-creational-soft) 0%, transparent 25%),
     radial-gradient(circle at 90% 30%, var(--cat-structural-soft) 0%, transparent 30%),
     radial-gradient(circle at 50% 90%, var(--cat-behavioral-soft) 0%, transparent 30%);
-  background-attachment: fixed;
+  background-size: 200% 200%;
+  background-position: 0% 0%;
+  animation: mesh-drift var(--motion-mesh-duration, 30s) ease-in-out infinite alternate;
+}
+
+@keyframes mesh-drift {
+  0%   { background-position: 0% 0%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 100%; }
 }
 
 #app {
@@ -38,4 +56,19 @@ body {
   body {
     transition: background-color var(--duration-normal) var(--ease-out);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Explicit pause on top of the global reset rule — belt + suspenders. */
+  body::before {
+    animation: none;
+  }
+}
+
+/* useSplitText — wrapper spans for animated title reveals.
+   display: inline-block is required so GSAP's yPercent references the span's own
+   height (not the parent's line-height). */
+.reveal-char,
+.reveal-ws {
+  display: inline-block;
 }

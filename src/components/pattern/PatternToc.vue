@@ -46,6 +46,13 @@ function scrollTo(id: string, e: MouseEvent) {
   max-height: calc(100vh - 120px);
   overflow-y: auto;
   font-size: 14px;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc {
+    will-change: auto;
+  }
 }
 
 .heading {

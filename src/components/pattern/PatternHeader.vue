@@ -6,10 +6,16 @@ import type { Pattern } from '@/types/pattern'
 import { gsap } from 'gsap'
 import { useGsapScene } from '@/composables/useGsapScene'
 import { useMotionTokens } from '@/composables/useMotionTokens'
+import { useSplitText } from '@/composables/useSplitText'
 
 const props = defineProps<{ pattern: Pattern }>()
 const headerEl = ref<HTMLElement | null>(null)
+const titleEl = ref<HTMLElement | null>(null)
 const tokensRef = useMotionTokens()
+
+const titleSplit = useSplitText(titleEl, { mode: 'char' })
+
+const titleLabel = `${props.pattern.titleZh} / ${props.pattern.titleEn}`
 
 useGsapScene(headerEl, (tl, rm) => {
   const tokens = tokensRef.value
@@ -17,12 +23,31 @@ useGsapScene(headerEl, (tl, rm) => {
     gsap.set(headerEl.value!, { opacity: 1, y: 0 })
     return
   }
-  tl.from(headerEl.value!, {
+  // Split the CJK title into per-char spans before targeting them.
+  titleSplit.split()
+  const breadcrumb = headerEl.value!.querySelector('.breadcrumb')!
+  const chip = headerEl.value!.querySelector('.chip')!
+
+  // Cascade: breadcrumb → chip → title chars.
+  tl.from(breadcrumb, {
     duration: tokens.fadeOnly.duration,
     ease: tokens.fadeOnly.ease,
     y: tokens.fadeOnly.fromY,
     opacity: tokens.fadeOnly.fromOpacity,
   })
+  tl.from(chip, {
+    duration: tokens.fadeOnly.duration,
+    ease: tokens.fadeOnly.ease,
+    y: tokens.fadeOnly.fromY,
+    opacity: tokens.fadeOnly.fromOpacity,
+  }, '<+=0.05')
+  tl.from('.reveal-char', {
+    duration: tokens.fadeOnly.duration,
+    ease: tokens.fadeOnly.ease,
+    yPercent: 100,
+    opacity: 0,
+    stagger: 0.02,
+  }, '<+=0.1')
 })
 
 const categoryZh = {
@@ -42,7 +67,7 @@ const categoryZh = {
       <span aria-current="page">{{ pattern.titleZh }}</span>
     </nav>
     <CategoryChip :category="pattern.category" />
-    <h1 class="title">{{ pattern.titleZh }} <span class="title-en">/ {{ pattern.titleEn }}</span></h1>
+    <h1 ref="titleEl" class="title" :aria-label="titleLabel">{{ pattern.titleZh }} <span class="title-en">/ {{ pattern.titleEn }}</span></h1>
   </header>
 </template>
 

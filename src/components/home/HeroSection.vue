@@ -4,9 +4,13 @@ import { gsap } from 'gsap'
 import ClayButton from '@/components/ui/ClayButton.vue'
 import { useGsapScene } from '@/composables/useGsapScene'
 import { useMotionTokens } from '@/composables/useMotionTokens'
+import { useSplitText } from '@/composables/useSplitText'
 
 const heroEl = ref<HTMLElement | null>(null)
+const titleEl = ref<HTMLElement | null>(null)
 const tokensRef = useMotionTokens()
+
+const titleSplit = useSplitText(titleEl, { mode: 'char' })
 
 useGsapScene(heroEl, (tl, rm) => {
   const tokens = tokensRef.value
@@ -14,14 +18,16 @@ useGsapScene(heroEl, (tl, rm) => {
     gsap.set(heroEl.value!, { opacity: 1, y: 0 })
     return
   }
-  const title = heroEl.value!.querySelector('.title')!
+  // Split the CJK title into per-char spans BEFORE targeting them with GSAP.
+  titleSplit.split()
   const cta = heroEl.value!.querySelector('.actions')!
 
-  tl.from(title, {
+  tl.from('.reveal-char', {
     duration: tokens.heroTitle.duration,
     ease: tokens.heroTitle.ease,
-    y: tokens.heroTitle.fromY,
-    opacity: tokens.heroTitle.fromOpacity,
+    yPercent: 100,
+    opacity: 0,
+    stagger: 0.025,
   })
   tl.from(cta, {
     duration: tokens.entryStrong.duration,
@@ -36,7 +42,7 @@ useGsapScene(heroEl, (tl, rm) => {
 <template>
   <section ref="heroEl" class="hero">
     <div class="hero-inner">
-      <h1 class="title">23 种 GoF 设计模式</h1>
+      <h1 ref="titleEl" class="title" aria-label="23 种 GoF 设计模式">23 种 GoF 设计模式</h1>
       <div class="actions">
         <ClayButton to="/pattern/singleton" variant="primary">开始学习</ClayButton>
       </div>

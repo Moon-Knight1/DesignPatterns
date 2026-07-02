@@ -2,10 +2,15 @@
 import { RouterView } from 'vue-router'
 import { gsap } from 'gsap'
 import { useMotionTokens } from '@/composables/useMotionTokens'
+import { useRouteFocus } from '@/composables/useRouteFocus'
+import GrainOverlay from '@/components/layout/GrainOverlay.vue'
 import SiteFooter from '@/components/layout/SiteFooter.vue'
 
 // ⚠️ 顶层只接 ref，.value 在 Transition 钩子里读（spec §4.4.3）
 const tokensRef = useMotionTokens()
+
+// Move keyboard / screen-reader focus to <main> after each route change (a11y).
+useRouteFocus()
 
 function onLeave(el: Element, done: () => void) {
   gsap.killTweensOf(el)                                    // 路线 A：节点级清理（spec §3.4）
@@ -39,5 +44,6 @@ function onEnter(el: Element, done: () => void) {
       </Transition>
     </RouterView>
   </main>
+  <GrainOverlay />
   <SiteFooter />
 </template>
