@@ -9,7 +9,11 @@ export default defineConfig(({ mode }) => ({
     vue(),
     viteStaticCopy({
       targets: [
-        { src: 'imgs/**/*', dest: 'imgs' },
+        // dest is '.' (not 'imgs') because vite-plugin-static-copy preserves
+        // the src path under dest. With dest 'imgs', files landed at
+        // dist/imgs/imgs/... (double prefix) — useMarkdown rewrites to
+        // <BASE_URL>imgs/..., causing 404 in production.
+        { src: 'imgs/**/*', dest: '.' },
       ],
     }),
   ],
